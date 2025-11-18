@@ -1,62 +1,93 @@
-/* eslint-disable react-hooks/static-components */
-"use client";
-import { useState } from 'react';
-import ProductCard from '../Components/product/ProductCard';
+ "use client";
+import { useState, useEffect } from "react";
+import ProductCard from "../Components/product/ProductCard";
+import { useLoader } from "@/app/context/LoaderContext";
 
-const PRODUCTS = [
-  { id: 1, name: 'Wireless Headphones', description: 'High-quality sound with noise cancellation', price: 2999, category: 'electronics', image: '/prodcut1.jpg' },
-  { id: 2, name: 'Smart Watch', description: 'Track your fitness goals', price: 4999, category: 'electronics', image: '/prodcut1.jpg' },
-  { id: 3, name: 'Running Shoes', description: 'Comfortable and durable', price: 3499, category: 'fashion', image: '/prodcut1.jpg' },
-  { id: 4, name: 'Laptop Bag', description: 'Stylish and spacious', price: 1299, category: 'accessories', image: '/prodcut1.jpg' },
-  { id: 5, name: 'Coffee Maker', description: 'Brew perfect coffee every time', price: 2499, category: 'home', image: '/prodcut1.jpg' },
-  { id: 6, name: 'Yoga Mat', description: 'Non-slip surface for better grip', price: 899, category: 'fitness', image: '/prodcut1.jpg' },
-];
+const PRODUCTS_API = "http://localhost:5000/api/products";
 
 const CATEGORIES = [
-  { id: 'all', name: 'All Products' },
-  { id: 'electronics', name: 'Electronics' },
-  { id: 'fashion', name: 'Fashion' },
-  { id: 'accessories', name: 'Accessories' },
-  { id: 'home', name: 'Home & Kitchen' },
-  { id: 'fitness', name: 'Fitness' },
+  { id: "all", name: "All Products" },
+  { id: "electronics", name: "Electronics" },
+  { id: "fashion", name: "Fashion" },
+  { id: "accessories", name: "Accessories" },
+  { id: "home", name: "Home & Kitchen" },
+  { id: "fitness", name: "Fitness" },
 ];
 
 const PRICES = [
-  { id: 'under-1000', label: 'Under ₹1000', test: p => p.price < 1000 },
-  { id: '1000-3000', label: '₹1000 - ₹3000', test: p => p.price >= 1000 && p.price <= 3000 },
-  { id: '3000-5000', label: '₹3000 - ₹5000', test: p => p.price >= 3000 && p.price <= 5000 },
-  { id: 'above-5000', label: 'Above ₹5000', test: p => p.price > 5000 },
+  { id: "under-1000", label: "Under ₹1000", test: (p) => p.price < 1000 },
+  {
+    id: "1000-3000",
+    label: "₹1000 - ₹3000",
+    test: (p) => p.price >= 1000 && p.price <= 3000,
+  },
+  {
+    id: "3000-5000",
+    label: "₹3000 - ₹5000",
+    test: (p) => p.price >= 3000 && p.price <= 5000,
+  },
+  { id: "above-5000", label: "Above ₹5000", test: (p) => p.price > 5000 },
 ];
 
 export default function ProductsPage() {
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [sortBy, setSortBy] = useState('featured');
+  const [products, setProducts] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [sortBy, setSortBy] = useState("featured");
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const [selectedPrices, setSelectedPrices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+   const { setIsLoading } = useLoader();
+
+  // Fetch products from backend on component mount
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(PRODUCTS_API);
+        if (!response.ok) {
+          throw new Error("Failed to fetch products");
+        }
+        const data = await response.json();
+        setProducts(data);
+        setError("");
+      } catch (err) {
+        setError("Error loading products. Please try again later.");
+        console.error("Fetch error:", err);
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [setIsLoading]);
 
   function handlePriceChange(id) {
-    setSelectedPrices(prices =>
+    setSelectedPrices((prices) =>
       prices.includes(id)
-        ? prices.filter(pid => pid !== id)
+        ? prices.filter((pid) => pid !== id)
         : [...prices, id]
     );
   }
 
   // Filtering products
-  let filtered = PRODUCTS;
-  if (selectedCategory !== 'all') {
-    filtered = filtered.filter(p => p.category === selectedCategory);
+  let filtered = products;
+  if (selectedCategory !== "all") {
+    filtered = filtered.filter((p) => p.category === selectedCategory);
   }
   if (selectedPrices.length > 0) {
-    filtered = filtered.filter(p =>
-      selectedPrices.some(
-        priceId => PRICES.find(pr => pr.id === priceId).test(p)
-      )
+    filtered = filtered.filter((p) =>
+      selectedPrices.some((priceId) => PRICES.find((pr) => pr.id === priceId).test(p))
     );
   }
+
   // Sorting
-  if (sortBy === 'price-low') filtered = [...filtered].sort((a, b) => a.price - b.price);
-  else if (sortBy === 'price-high') filtered = [...filtered].sort((a, b) => b.price - a.price);
+  if (sortBy === "price-low") {
+    filtered = [...filtered].sort((a, b) => a.price - b.price);
+  } else if (sortBy === "price-high") {
+    filtered = [...filtered].sort((a, b) => b.price - a.price);
+  }
 
   function clearFilters() {
     setSelectedCategory("all");
@@ -66,15 +97,19 @@ export default function ProductsPage() {
   // Filter sidebar/drawer content
   function FilterContent() {
     return (
-      <div className='bg-white text-gray-800 p-2 rounded'>
+      <div className="bg-white text-gray-800 p-2 rounded">
         {/* Categories */}
         <h3 className="text-xl font-bold mb-2">Categories</h3>
         <ul className="space-y-2 mb-4">
-          {CATEGORIES.map(category => (
+          {CATEGORIES.map((category) => (
             <li key={category.id}>
               <button
                 onClick={() => setSelectedCategory(category.id)}
-                className={`w-full text-left px-4 py-2 rounded-lg transition ${selectedCategory === category.id ? 'bg-blue-600 text-white font-semibold' : 'hover:bg-gray-100 text-gray-700'}`}
+                className={`w-full text-left px-4 py-2 rounded-lg transition ${
+                  selectedCategory === category.id
+                    ? "bg-blue-600 text-white font-semibold"
+                    : "hover:bg-gray-100 text-gray-700"
+                }`}
               >
                 {category.name}
               </button>
@@ -84,7 +119,7 @@ export default function ProductsPage() {
         {/* Price Range */}
         <h3 className="text-xl font-bold mb-2">Price Range</h3>
         <div className="space-y-2 mb-4">
-          {PRICES.map(price => (
+          {PRICES.map((price) => (
             <label key={price.id} className="flex items-center">
               <input
                 checked={selectedPrices.includes(price.id)}
@@ -92,11 +127,14 @@ export default function ProductsPage() {
                 type="checkbox"
                 className="mr-2 accent-blue-600"
               />
-              <span className='text-gray-700'>{price.label}</span>
+              <span className="text-gray-700">{price.label}</span>
             </label>
           ))}
         </div>
-        <button className="w-full px-4 py-2 bg-gray-200 rounded-lg text-blue-700 font-semibold" onClick={clearFilters}>
+        <button
+          className="w-full px-4 py-2 bg-gray-200 rounded-lg text-blue-700 font-semibold"
+          onClick={clearFilters}
+        >
           Clear Filters
         </button>
       </div>
@@ -114,8 +152,13 @@ export default function ProductsPage() {
           Filters
         </button>
       </div>
+
       {/* Overlay for Drawer */}
-      <div className={`fixed inset-0 z-40 bg-black/40 ${mobileFilterOpen ? "block" : "hidden"}`} onClick={() => setMobileFilterOpen(false)} />
+      <div
+        className={`fixed inset-0 z-40 bg-black/40 ${mobileFilterOpen ? "block" : "hidden"}`}
+        onClick={() => setMobileFilterOpen(false)}
+      />
+
       {/* Filter Drawer on Mobile/Tablet */}
       <aside
         className={`fixed inset-y-0 left-0 z-50 w-80 max-w-[90vw] bg-white shadow-2xl p-6 transform transition-transform duration-200
@@ -123,7 +166,12 @@ export default function ProductsPage() {
       >
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-bold text-gray-900">Filters</h3>
-          <button onClick={() => setMobileFilterOpen(false)} className="text-3xl font-bold pb-2 text-gray-800">&times;</button>
+          <button
+            onClick={() => setMobileFilterOpen(false)}
+            className="text-3xl font-bold pb-2 text-gray-800"
+          >
+            &times;
+          </button>
         </div>
         <FilterContent />
       </aside>
@@ -131,7 +179,7 @@ export default function ProductsPage() {
       {/* Main Section Responsive Layout */}
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Sidebar for desktop (always shown) */}
-        <aside className="hidden lg:block w-64 flex-shrink-0">
+        <aside className="hidden lg:block w-64 shrink-0">
           <FilterContent />
         </aside>
 
@@ -139,10 +187,12 @@ export default function ProductsPage() {
         <div className="flex-1">
           {/* Sort Bar */}
           <div className="bg-white rounded-lg shadow-md p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-            <p className="text-gray-600 font-medium">Showing {filtered.length} products</p>
+            <p className="text-gray-600 font-medium">
+              Showing {filtered.length} products
+            </p>
             <select
               value={sortBy}
-              onChange={e => setSortBy(e.target.value)}
+              onChange={(e) => setSortBy(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
             >
               <option value="featured">Featured</option>
@@ -150,15 +200,38 @@ export default function ProductsPage() {
               <option value="price-high">Price: High to Low</option>
             </select>
           </div>
+
+          {/* Loading state */}
+          {loading && (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-center">
+                <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <p className="text-gray-600 mt-4">Loading products...</p>
+              </div>
+            </div>
+          )}
+
+          {/* Error state */}
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
+              {error}
+            </div>
+          )}
+
           {/* Products grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filtered.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-            {filtered.length === 0 && (
-              <p className="text-center text-gray-500 col-span-full py-12">No products found for this filter.</p>
-            )}
-          </div>
+          {!loading && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              {filtered.length > 0 ? (
+                filtered.map((product) => (
+                  <ProductCard key={product._id} product={product} />
+                ))
+              ) : (
+                <p className="text-center text-gray-500 col-span-full py-12">
+                  No products found for this filter.
+                </p>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </>

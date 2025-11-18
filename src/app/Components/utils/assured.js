@@ -27,6 +27,7 @@ export function FeaturesSection() {
         display: "flex",
         gap: "2rem",
         background: "#222",
+        color:"white",
         padding: "3rem 1rem",
         flexWrap: "wrap",
         justifyContent: "center",

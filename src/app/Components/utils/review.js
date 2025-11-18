@@ -1,98 +1,103 @@
-/* eslint-disable @next/next/no-img-element */
-/* eslint-disable react/no-unescaped-entities */
 "use client";
-import { useState, useEffect } from "react";
-import { StarIcon } from "@heroicons/react/24/solid";
+import { useState } from "react";
 
-const reviews = [
-  {
-    id: 1,
-    name: "Sophia Lee",
-    avatar: "/profile.avif",
-    rating: 5,
-    comment:
-      "Loved the quality and the fabric! Shipping was fast and customer service was excellent.",
-    date: "Oct 12, 2025",
-  },
-  {
-    id: 2,
-    name: "James Anderson",
-    avatar: "/profile.avif",
-    rating: 4,
-    comment:
-      "Great variety and prices. Shopping experience was smooth and hassle-free.",
-    date: "Nov 02, 2025",
-  },
-  {
-    id: 3,
-    name: "Aria Patel",
-    avatar: "/profile.avif",
-    rating: 5,
-    comment:
-      "Perfect fit and stylish looks! This store has my loyalty for sure.",
-    date: "Oct 25, 2025",
-  },
-];
+export default function ReviewForm({ productId, onNewReview }) {
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
-export default function CustomerReviews() {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const handleRatingChange = (value) => {
+    setRating(value);
+  };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % reviews.length);
-    }, 6000); // Change review every 6 seconds
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setError(null);
 
-    return () => clearInterval(interval);
-  }, []);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Please login to submit a review.");
+      setSubmitting(false);
+      return;
+    }
 
-  const review = reviews[currentIndex];
+    try {
+      const response = await fetch(`http://localhost:5000/api/products/${productId}/reviews`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          rating,
+          comment,
+        }),
+      });
+
+
+      if (!response.ok) {
+        throw new Error("Failed to submit review.");
+      }
+
+      const newReview = await response.json();
+
+      // Clear form
+      setRating(0);
+      setComment("");
+      onNewReview(newReview);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
-    <section className="max-w-5xl mx-auto my-20 mb-2 p-6 bg-white rounded-3xl shadow-lg relative overflow-hidden">
-      <div className="flex flex-col items-center text-center px-6 relative">
-        {/* Overlapping Avatars */}
-        <div className="flex mb-4 space-x-2 justify-center ">
-          {reviews.map((r, idx) => (
-            <img
-              key={r.id}
-              src={r.avatar}
-              alt={r.name}
-              className={`w-20 h-20 aspect-square rounded-full border-4 border-white shadow-lg cursor-pointer transition-transform ${
-                idx === currentIndex ? "scale-125 z-10" : "scale-90 opacity-60"
-              }`}
-              title={r.name}
-            />
+    <form onSubmit={handleSubmit} className="bg-white shadow p-6 rounded-lg mt-12 max-w-2xl mx-auto">
+      <h3 className="text-xl font-semibold mb-4">Write a Customer Review</h3>
+
+      {error && <p className="text-red-600 mb-4">{error}</p>}
+
+      <div className="mb-4">
+        <label className="block font-semibold mb-2">Rating</label>
+        <div className="flex gap-1">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <button
+              type="button"
+              key={star}
+              className={`text-3xl ${star <= rating ? "text-yellow-400" : "text-gray-300"}`}
+              onClick={() => handleRatingChange(star)}
+              aria-label={`${star} star${star > 1 ? "s" : ""}`}
+            >
+              ★
+            </button>
           ))}
         </div>
-
-        {/* Animated Review Content */}
-        <div
-          key={review.id}
-          className="transition-opacity duration-1000 ease-in-out"
-          style={{ opacity: 1 }}
-        >
-          {/* Star Rating */}
-          <div className="flex justify-center text-yellow-400 mb-3">
-            {[...Array(5)].map((_, idx) => (
-              <StarIcon
-                key={idx}
-                className={`w-6 h-6 ${
-                  idx < review.rating ? "fill-current" : "text-gray-300"
-                }`}
-              />
-            ))}
-          </div>
-
-          {/* Comment */}
-          <p className="text-lg italic text-gray-700 leading-relaxed max-w-xl mb-6">
-            "{review.comment}"
-          </p>
-
-          {/* User Name & Date */}
-          <div className="text-gray-800 font-semibold text-xl">{review.name}</div>
-          <div className="text-gray-500 text-sm mb-6">{review.date}</div>
-        </div>
       </div>
-    </section>
+
+      <div className="mb-4">
+        <label htmlFor="comment" className="block font-semibold mb-2">
+          Comment
+        </label>
+        <textarea
+          id="comment"
+          rows="4"
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          required
+          className="w-full border border-gray-300 rounded p-2 resize-none"
+        />
+      </div>
+
+      <button
+        type="submit"
+        disabled={submitting}
+        className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
+      >
+        {submitting ? "Submitting..." : "Submit Review"}
+      </button>
+    </form>
   );
 }

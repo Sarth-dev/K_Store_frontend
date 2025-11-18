@@ -1,58 +1,105 @@
-"use client"
-import Link from 'next/link';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+/* eslint-disable @next/next/no-img-element */
+"use client";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function ProductCard({ product }) {
   const router = useRouter();
 
   const handleAddToCart = (e) => {
-    e.preventDefault(); // Prevent Link navigation
-    e.stopPropagation(); // Stop event bubbling
-    
-    // Add to cart logic (save to localStorage or context)
-    const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const existingItemIndex = existingCart.findIndex(item => item.id === product.id);
-    
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!product || !product._id) {
+      alert("Invalid product");
+      return;
+    }
+
+    // Get existing cart
+    const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const existingItemIndex = existingCart.findIndex(
+      (item) => item._id === product._id
+    );
+
     if (existingItemIndex > -1) {
-      // Item exists, increase quantity
       existingCart[existingItemIndex].quantity += 1;
     } else {
-      // New item, add to cart
-      existingCart.push({ ...product, quantity: 1 });
+      existingCart.push({
+        _id: product._id,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        quantity: 1,
+      });
     }
-    
-    localStorage.setItem('cart', JSON.stringify(existingCart));
-    
-    // Navigate to cart page
-    router.push('/pages/carts');
+    localStorage.setItem("cart", JSON.stringify(existingCart));
+    alert("Added to cart!");
+    router.push("/pages/carts");
   };
 
+  const imageUrl = product?.images?.length
+    ? product.images[0]
+    : product?.image || "";
+
+  const discountPercent =
+    product.originalPrice && product.price
+      ? Math.round(
+        ((product.originalPrice - product.price) / product.originalPrice) * 100
+      )
+      : 0;
+
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
-      <Link href={`/product/${product.id}`}>
-        <div className="relative h-64 w-full">
-          <Image
-            src={product.image || '/images/placeholder.jpg'}
-            alt={product.name}
-            fill
-            className="object-cover"
-          />
+    <div className="group bg-white rounded-xl shadow-md flex flex-col h-full overflow-hidden hover:shadow-xl transition-shadow duration-300">
+      <Link href={`/product/${product._id}`} className="flex flex-col h-full">
+        {/* Product image */}
+        {/* Product image */}
+        <div className="relative w-full aspect-w-1 aspect-h-1 bg-gray-100 flex items-center justify-center overflow-hidden rounded-t-lg">
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt={product.name}
+              // Use 'object-contain' to ensure full image visibility without cropping
+              className="object-contain max-h-full max-w-full transition-transform duration-200 group-hover:scale-105 bg-white"
+              loading="lazy"
+              draggable={false}
+              style={{
+                maxWidth: "100%",
+                maxHeight: "100%",
+              }}
+            />
+          ) : (
+            <div className="text-gray-400 text-center text-sm">No Image</div>
+          )}
         </div>
-        <div className="p-4">
-          <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">
+
+        {/* Card body */}
+        <div className="flex-1 flex flex-col justify-between p-3 sm:p-4 gap-2">
+          <h3 className="text-md md:text-lg font-semibold text-gray-900 line-clamp-2 min-h-[2.5em]">
             {product.name}
           </h3>
-          <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-            {product.description}
+          <p className="text-xs md:text-sm text-gray-600 mb-1 line-clamp-2 min-h-[2.3em]">
+            {product.description || "No description available"}
           </p>
-          <div className="flex items-center justify-between">
-            <span className="text-2xl font-bold text-blue-600">
-              ₹{product.price}
-            </span>
-            <button 
+          <div className="flex items-end justify-between mt-auto">
+            <div className="flex flex-col">
+              <span className="text-lg md:text-xl font-bold text-blue-600">
+                ₹{product.price?.toLocaleString()}
+              </span>
+              {product.originalPrice && (
+                <span className="text-xs md:text-sm text-gray-400 line-through">
+                  ₹{product.originalPrice?.toLocaleString()}
+                </span>
+              )}
+              {discountPercent > 0 && (
+                <span className="inline-block bg-red-100 text-red-700 text-xs font-semibold px-2 py-0.5 rounded mt-1">
+                  {discountPercent}% OFF
+                </span>
+              )}
+            </div>
+            <button
               onClick={handleAddToCart}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="ml-3 px-3 py-1.5 md:px-4 md:py-2 bg-blue-600 text-xs sm:text-sm md:text-base font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+              tabIndex={-1}
             >
               Add to Cart
             </button>
