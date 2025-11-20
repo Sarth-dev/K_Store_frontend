@@ -10,7 +10,7 @@ import YouMayLikeThis from "@/app/Components/utils/slider";
 
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
-console.log("API_URL =", API_BASE);
+
 
 export default function ProductDetail() {
   const params = useParams();

@@ -9,7 +9,7 @@ import CustomerReviews from "./Components/utils/review";
 import YouMayLikeThis from "./Components/utils/slider";
 import { FeaturesSection } from "./Components/utils/assured";
 
-const API_BASE = process.env.API_BASE;
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
 
 export default function Main() {
   const [newArrivals, setNewArrivals] = useState([]);
