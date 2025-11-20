@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import ProductCard from "../Components/product/ProductCard";
 import { useLoader } from "@/app/context/LoaderContext";
 
-const PRODUCTS_API = process.env.NEXT_PUBLIC_API_BASE;
+const PRODUCTS_API = process.env.NEXT_PUBLIC_API_BASE || "https://k-store-bdz5.onrender.com/api";
 
 const CATEGORIES = [
   { id: "all", name: "All Products" },
