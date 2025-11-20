@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import ProductCard from "../../Components/product/ProductCard";
 
-const PRODUCTS_API = "http://localhost:5000/api/products";
+const PRODUCTS_API = process.env.NEXT_PUBLIC_API_BASE;
 
 const CATEGORIES = [
   { id: "all", name: "All Products" },

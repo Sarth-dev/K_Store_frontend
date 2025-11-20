@@ -20,7 +20,7 @@ export default function LoginPage() {
     setError("");
   };
 
-  const API_URL = process.env.API_BASE
+  const API_URL = process.env.NEXT_PUBLIC_API_BASE;
 
   const handleSubmit = async (e) => {
     e.preventDefault();

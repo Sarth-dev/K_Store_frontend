@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-const API_BASE = process.env.API_BASE;
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
 
 export default function Header() {
   const router = useRouter();

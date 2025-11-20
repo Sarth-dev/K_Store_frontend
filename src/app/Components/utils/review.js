@@ -15,6 +15,7 @@ export default function ReviewForm({ productId, onNewReview }) {
     e.preventDefault();
     setSubmitting(true);
     setError(null);
+    const API_URL=process.env.NEXT_PUBLIC_API_BASE;
 
     const token = localStorage.getItem("token");
     if (!token) {
@@ -22,7 +23,6 @@ export default function ReviewForm({ productId, onNewReview }) {
       setSubmitting(false);
       return;
     }
-    const API_URL=process.env.API_BASE;
 
     try {
       const response = await fetch(`${API_URL}/products/${productId}/reviews`, {
