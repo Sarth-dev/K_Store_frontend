@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = process.env.API_BASE;
 
 export default function OrderConfirmation() {
   const params = useParams();
@@ -23,7 +23,7 @@ export default function OrderConfirmation() {
         const token = localStorage.getItem("token");
 
         if (!token) {
-          router.push("/login");
+          router.push("/pages/auth/login");
           return;
         }
 

@@ -7,6 +7,9 @@ import "./globals.css";
 export const metadata = {
   title: "K Store",
   description: "Your favorite e-commerce store",
+  icons: {
+    icon: "/favicon.ico", // or .png
+  },
 };
 
 export default function RootLayout({ children }) {

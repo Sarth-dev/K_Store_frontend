@@ -22,9 +22,10 @@ export default function ReviewForm({ productId, onNewReview }) {
       setSubmitting(false);
       return;
     }
+    const API_URL=process.env.API_BASE;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/products/${productId}/reviews`, {
+      const response = await fetch(`${API_URL}/products/${productId}/reviews`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

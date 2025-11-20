@@ -9,7 +9,7 @@ import CustomerReviews from "./Components/utils/review";
 import YouMayLikeThis from "./Components/utils/slider";
 import { FeaturesSection } from "./Components/utils/assured";
 
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = process.env.API_BASE;
 
 export default function Main() {
   const [newArrivals, setNewArrivals] = useState([]);

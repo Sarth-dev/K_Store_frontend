@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:5000/api/cart";
+const API_URL = process.env.API_BASE;
 
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");
@@ -11,7 +11,7 @@ const getAuthHeader = () => {
 export const cartApi = {
   // Get cart
   getCart: async () => {
-    const response = await fetch(API_BASE, {
+    const response = await fetch(`${API_URL}/cart`, {
       method: "GET",
       headers: getAuthHeader(),
     });
@@ -20,7 +20,7 @@ export const cartApi = {
 
   // Add to cart
   addToCart: async (productId, quantity) => {
-    const response = await fetch(API_BASE, {
+    const response = await fetch(`${API_URL}/cart`, {
       method: "POST",
       headers: getAuthHeader(),
       body: JSON.stringify({ productId, quantity }),
@@ -30,7 +30,7 @@ export const cartApi = {
 
   // Update item quantity
   updateItem: async (productId, quantity) => {
-    const response = await fetch(`${API_BASE}/item`, {
+    const response = await fetch(`${API_URL}/cart/item`, {
       method: "PUT",
       headers: getAuthHeader(),
       body: JSON.stringify({ productId, quantity }),
@@ -40,7 +40,7 @@ export const cartApi = {
 
   // Remove from cart
   removeFromCart: async (productId) => {
-    const response = await fetch(`${API_BASE}/item`, {
+    const response = await fetch(`${API_URL}/cart/item`, {
       method: "DELETE",
       headers: getAuthHeader(),
       body: JSON.stringify({ productId }),
@@ -50,7 +50,7 @@ export const cartApi = {
 
   // Clear cart
   clearCart: async () => {
-    const response = await fetch(`${API_BASE}/clear`, {
+    const response = await fetch(`${API_URL}/cart/clear`, {
       method: "POST",
       headers: getAuthHeader(),
     });

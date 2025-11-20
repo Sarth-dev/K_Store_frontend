@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import ProductCard from "../Components/product/ProductCard";
 import { useLoader } from "@/app/context/LoaderContext";
 
-const PRODUCTS_API = "http://localhost:5000/api/products";
+const PRODUCTS_API = process.env.API_BASE;
 
 const CATEGORIES = [
   { id: "all", name: "All Products" },
@@ -44,7 +44,7 @@ export default function ProductsPage() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch(PRODUCTS_API);
+        const response = await fetch(`${PRODUCTS_API}/products`);
         if (!response.ok) {
           throw new Error("Failed to fetch products");
         }
