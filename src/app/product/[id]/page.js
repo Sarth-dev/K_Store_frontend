@@ -75,6 +75,69 @@ export default function ProductDetail() {
       </div>
     );
   }
+  //handlecart
+ const handleAddToCart = async () => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    return router.push("/pages/auth/login");
+  }
+
+  try {
+    const response = await fetch(`${API_BASE}/cart`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        productId: product._id,
+        quantity,
+      }),
+    });
+
+    if (response.ok) {
+      alert("Added to cart!");
+      router.push("/pages/carts");
+    } else {
+      alert("Failed to add to cart");
+    }
+  } catch (err) {
+    alert("Error adding to cart");
+  }
+};
+
+//handel buy niw
+const handleBuyNow = async () => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    return router.push("/pages/auth/login");
+  }
+
+  try {
+    const response = await fetch(`${API_BASE}/cart`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        productId: product._id,
+        quantity,
+      }),
+    });
+
+    if (response.ok) {
+      router.push("/pages/checkout");
+    } else {
+      alert("Failed to proceed");
+    }
+  } catch (err) {
+    alert("Error processing request");
+  }
+};
+
 
   // Fallback images array
   const images = product?.images?.length ? product.images : [product.image];
