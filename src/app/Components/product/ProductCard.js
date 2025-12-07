@@ -61,6 +61,7 @@ export default function ProductCard({ product }) {
               // Use 'object-contain' to ensure full image visibility without cropping
               className="object-contain max-h-full max-w-full transition-transform duration-200 group-hover:scale-105 bg-white"
               loading="lazy"
+              sizes="(max-width: 768px) 100vw, 33vw"
               draggable={false}
               style={{
                 maxWidth: "100%",

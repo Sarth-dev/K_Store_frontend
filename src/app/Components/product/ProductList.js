@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import ProductCard from "../../Components/product/ProductCard";
+import ProductSkeleton from "./ProductSkeleton";
 
 const PRODUCTS_API = process.env.NEXT_PUBLIC_API_BASE;
 
@@ -187,13 +188,13 @@ export default function ProductsPage() {
 
           {/* Loading state */}
           {loading && (
-            <div className="flex items-center justify-center py-12">
-              <div className="text-center">
-                <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                <p className="text-gray-600 mt-4">Loading products...</p>
-              </div>
-            </div>
-          )}
+  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+    {Array.from({ length: 6 }).map((_, i) => (
+      <ProductSkeleton key={i} />
+    ))}
+  </div>
+)}
+
 
           {/* Error state */}
           {error && (
