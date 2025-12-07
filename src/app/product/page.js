@@ -1,6 +1,7 @@
  "use client";
 import { useState, useEffect } from "react";
 import ProductCard from "../Components/product/ProductCard";
+import ProductSkeleton from "../Components/product/ProductSkeleton";
 import { useLoader } from "@/app/context/LoaderContext";
 
 const PRODUCTS_API = process.env.NEXT_PUBLIC_API_BASE || "https://k-store-bdz5.onrender.com/api";
@@ -93,6 +94,10 @@ export default function ProductsPage() {
     setSelectedCategory("all");
     setSelectedPrices([]);
   }
+  <div className="text-sm text-gray-600 mb-3">
+  Home / {selectedCategory === "all" ? "All Products" : selectedCategory}
+</div>
+
 
   // Filter sidebar/drawer content
   function FilterContent() {
@@ -144,6 +149,10 @@ export default function ProductsPage() {
   return (
     <>
       {/* MOBILE/TABLET: filter button & drawer */}
+      <div className="text-sm text-gray-600 mb-3">
+  Home / {selectedCategory === "all" ? "All Products" : selectedCategory}
+</div>
+
       <div className="flex justify-end lg:hidden mb-4">
         <button
           className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold"
@@ -202,14 +211,14 @@ export default function ProductsPage() {
           </div>
 
           {/* Loading state */}
-          {loading && (
-            <div className="flex items-center justify-center py-12">
-              <div className="text-center">
-                <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                <p className="text-gray-600 mt-4">Loading products...</p>
-              </div>
-            </div>
-          )}
+         {loading && (
+  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+    {Array.from({ length: 6 }).map((_, i) => (
+      <ProductSkeleton key={i} />
+    ))}
+  </div>
+)}
+
 
           {/* Error state */}
           {error && (
