@@ -78,6 +78,42 @@ export default function Main() {
           </Link>
         </div>
       </section>
+      {/* Shop by Category Section */}
+      <section className="my-12 px-4">
+        <h2 className="text-3xl font-semibold text-gray-100 mb-6 border-b-4 border-blue-600 w-fit">
+          Shop by Category
+        </h2>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+          {[
+            { name: "Home & Kitchen", image: "/category_img/Kitchen.jpeg", slug: "home" },
+            { name: "Storage", image: "/category_img/Storage.jpeg", slug: "storage" },
+            { name: "Electronics", image: "/category_img/electronics.jpeg", slug: "electronics" },
+            { name: "Fitness", image: "/category_img/Fitness.jpeg", slug: "fitness" },
+            { name: "Accessories", image: "/category_img/Accessories.jpeg", slug: "accessories" },
+            { name: "Fashion", image: "/category_img/Fashion.jpeg", slug: "fashion" },
+          ].map((cat, index) => (
+            <Link
+              key={index}
+              href={`/product?category=${cat.slug}`}
+              className="group block text-center bg-white p-4 rounded-xl shadow hover:shadow-lg transition cursor-pointer"
+            >
+              <div className="w-full h-28 flex items-center justify-center overflow-hidden rounded-lg mb-3 bg-gray-50">
+                <img
+                  src={cat.image}
+                  alt={cat.name}
+                  className="object-contain w-full h-full rounded-md group-hover:scale-105 transition-transform"
+                  loading="lazy"
+                />
+              </div>
+              <h3 className="text-gray-800 font-semibold group-hover:text-blue-600 transition">
+                {cat.name}
+              </h3>
+            </Link>
+          ))}
+        </div>
+      </section>
+
 
       {/* Error Message */}
       {error && (
