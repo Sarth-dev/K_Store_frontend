@@ -43,7 +43,7 @@ export default function RootLayout({ children }) {
           <GlobalLoader />
           <Header />
           {children}
-          {/* <Footer /> */}
+          <Footer />
         </LoaderProvider>
       </body>
     </html>

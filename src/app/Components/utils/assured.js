@@ -1,103 +1,76 @@
 const FEATURES = [
   {
     icon: "🚚",
-    title: "Free Shipping",
-    subtitle: "Fast delivery for all prepaid orders over Rs.249.",
-    info: "Arrives in 5-7 business days. Enjoy worry-free online shopping!",
+    title: "Reliable Delivery",
+    subtitle: "Orders are processed quickly and shipped with trusted partners.",
+    info: "Track your order at every step and shop without worry.",
+    accent: "from-indigo-500 to-blue-500",
   },
   {
     icon: "🎧",
-    title: "Customer Support",
-    subtitle: "Live chat & help for all queries.",
-    info: "Reach us by email, phone, or instant messaging. Instant support, always!",
+    title: "Dedicated Support",
+    subtitle: "Real humans ready to help when you need it.",
+    info: "Chat, email or call us — we’re always here for you.",
+    accent: "from-emerald-500 to-teal-500",
   },
   {
     icon: "🛡️",
-    title: "Secure Payments",
-    subtitle: "100% payment protection on all orders.",
-    info: "Choose from multiple payment options and shop with confidence.",
+    title: "Safe & Secure Payments",
+    subtitle: "Your payments are protected with industry-grade security.",
+    info: "Multiple payment options with complete peace of mind.",
+    accent: "from-orange-500 to-pink-500",
   },
 ];
 
 export function FeaturesSection() {
   return (
-    <section
-      className="features-section "
-      style={{
-        display: "flex",
-        gap: "2rem",
-        background: "#222",
-        color:"white",
-        padding: "3rem 1rem",
-        flexWrap: "wrap",
-        justifyContent: "center",
-      }}
-    >
-      {FEATURES.map(({ icon, title, subtitle, info }, i) => (
-        <div
-          key={i}
-          className="feature-card"
-          style={{
-            background: "linear-gradient(135deg, #232526 40%, #414345 100%)",
-            borderRadius: "1.5rem",
-            padding: "2rem",
-            minWidth: "250px",
-            maxWidth: "340px",
-            boxShadow: "0 8px 32px rgba(0,0,0,0.18)",
-            textAlign: "center",
-            color: "#f8f8f8",
-            flex: "1 1 300px",
-            margin: "1rem 0",
-            transition: "transform 0.2s, box-shadow 0.2s",
-            position: "relative",
-            overflow: "hidden",
-          }}
-          onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.04)")}
-          onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
-        >
+    <section className="bg-gradient-to-b from-gray-900 to-gray-950 py-20 px-4">
+      <div className="max-w-6xl mx-auto text-center mb-14">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-white">
+          Why Shop with <span className="text-indigo-400">K Store</span>?
+        </h2>
+        <p className="text-gray-400 mt-3 max-w-2xl mx-auto">
+          We focus on quality, transparency, and a smooth shopping experience —
+          so you can shop with confidence.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        {FEATURES.map(({ icon, title, subtitle, info, accent }, i) => (
           <div
-            style={{
-              fontSize: "2.75rem",
-              marginBottom: ".95rem",
-              background: "rgba(255,255,255,0.06)",
-              borderRadius: "50%",
-              width: "3.5rem",
-              height: "3.5rem",
-              lineHeight: "3.5rem",
-              display: "inline-block",
-              marginBottom: "1.1rem",
-            }}
+            key={i}
+            className="group relative bg-gray-900 rounded-2xl p-8 text-center
+                       border border-gray-800 shadow-lg
+                       hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
           >
-            {icon}
+            {/* Icon */}
+            <div
+              className={`mx-auto mb-6 flex items-center justify-center
+                          w-16 h-16 rounded-full bg-gradient-to-r ${accent}
+                          text-3xl shadow-lg`}
+            >
+              {icon}
+            </div>
+
+            <h3 className="text-xl font-bold text-white mb-2">
+              {title}
+            </h3>
+
+            <p className="text-gray-300 text-sm mb-3">
+              {subtitle}
+            </p>
+
+            <p className="text-sm text-indigo-300">
+              {info}
+            </p>
+
+            {/* Hover Glow */}
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-r opacity-0
+                            group-hover:opacity-10 transition pointer-events-none
+                            from-indigo-500 via-transparent to-transparent" />
           </div>
-          <h2
-            style={{
-              marginBottom: ".5rem",
-              fontSize: "1.35rem",
-              letterSpacing: "1px",
-              fontWeight: 700,
-            }}
-          >
-            {title}
-          </h2>
-          <p style={{ fontWeight: 500, marginBottom: ".5rem", color: "#e0e0e0", fontSize: "1rem" }}>
-            {subtitle}
-          </p>
-          <span style={{ color: "#7fd6f4", fontSize: ".97rem" }}>{info}</span>
-        </div>
-      ))}
-      <style>{`
-        @media (max-width: 900px) {
-          .features-section {
-            flex-direction: column;
-            align-items: center;
-            gap: 1.2rem;
-          }
-          .feature-card {
-            max-width: 96vw !important;
-          }
-        }
-      `}</style>
+        ))}
+      </div>
     </section>
   );
 }
