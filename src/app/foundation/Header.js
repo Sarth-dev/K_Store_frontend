@@ -201,7 +201,7 @@ export default function Header() {
                 <div className="px-4 py-3 border-b">
                   <p className="font-semibold">{user?.name || "Guest User"}</p>
                   <p className="text-xs text-gray-500">
-                    {user?.email || "guest@mail.com"}
+                    {user?.email || "No email need login"}
                   </p>
                 </div>
 
