@@ -49,60 +49,62 @@ export default function ProductCard({ product }) {
       : 0;
 
   return (
-    <div className="group bg-white rounded-xl shadow-md flex flex-col h-full overflow-hidden hover:shadow-xl transition-shadow duration-300">
+    <div className="group bg-white rounded-md border border-gray-100 hover:shadow-lg transition-all duration-300 flex flex-col overflow-hidden h-full">
       <Link href={`/product/${product._id}`} className="flex flex-col h-full">
-        {/* Product image */}
-        {/* Product image */}
-        <div className="relative w-full aspect-w-1 aspect-h-1 bg-gray-100 flex items-center justify-center overflow-hidden rounded-t-lg">
+
+        {/* Image */}
+        <div className="relative h-[150px] sm:h-[170px] md:h-[190px] bg-slate-50 flex items-center justify-center">
+          {discountPercent > 0 && (
+            <span className="absolute top-2 left-2 bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded-sm font-semibold">
+              {discountPercent}% OFF
+            </span>
+          )}
+
           {imageUrl ? (
             <img
               src={imageUrl}
               alt={product.name}
-              // Use 'object-contain' to ensure full image visibility without cropping
-              className="object-contain max-h-full max-w-full transition-transform duration-200 group-hover:scale-105 bg-white"
+              className="object-contain max-h-full max-w-full transition-transform duration-200 group-hover:scale-105"
               loading="lazy"
-              sizes="(max-width: 768px) 100vw, 33vw"
               draggable={false}
-              style={{
-                maxWidth: "100%",
-                maxHeight: "100%",
-              }}
             />
           ) : (
-            <div className="text-gray-400 text-center text-sm">No Image</div>
+            <span className="text-gray-400 text-xs">No Image</span>
           )}
         </div>
 
-        {/* Card body */}
-        <div className="flex-1 flex flex-col justify-between p-3 sm:p-4 gap-2">
-          <h3 className="text-md md:text-lg font-semibold text-gray-900 line-clamp-2 min-h-[2.5em]">
+        {/* Content */}
+        <div className="flex flex-col flex-1 px-2.5 py-2 sm:px-3 sm:py-3 gap-1">
+          <h3 className="text-sm sm:text-base font-medium text-gray-900 line-clamp-2 min-h-[2.3em]">
             {product.name}
           </h3>
-          <p className="text-xs md:text-sm text-gray-600 mb-1 line-clamp-2 min-h-[2.3em]">
-            {product.description || "No description available"}
+
+          <p className="text-xs text-gray-500 line-clamp-1">
+            {product.description || "No description"}
           </p>
-          <div className="flex items-end justify-between mt-auto">
-            <div className="flex flex-col">
-              <span className="text-lg md:text-xl font-bold text-blue-600">
+
+          {/* Price + CTA */}
+          <div className="mt-auto flex items-center justify-between pt-1">
+            <div>
+              <div className="text-sm sm:text-base font-bold text-indigo-700">
                 ₹{product.price?.toLocaleString()}
-              </span>
+              </div>
+
               {product.originalPrice && (
-                <span className="text-xs md:text-sm text-gray-400 line-through">
+                <div className="text-[11px] text-gray-400 line-through">
                   ₹{product.originalPrice?.toLocaleString()}
-                </span>
-              )}
-              {discountPercent > 0 && (
-                <span className="inline-block bg-red-100 text-red-700 text-xs font-semibold px-2 py-0.5 rounded mt-1">
-                  {discountPercent}% OFF
-                </span>
+                </div>
               )}
             </div>
+
             <button
               onClick={handleAddToCart}
-              className="ml-3 px-3 py-1.5 md:px-4 md:py-2 bg-blue-600 text-xs sm:text-sm md:text-base font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+              className="text-[11px] sm:text-xs px-2.5 py-1 rounded-sm font-semibold
+                     text-indigo-700 border border-indigo-600
+                     hover:bg-indigo-600 hover:text-white transition"
               tabIndex={-1}
             >
-              Add to Cart
+              ADD
             </button>
           </div>
         </div>

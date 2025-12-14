@@ -38,7 +38,7 @@ export default function YouMayLikeThis({ products , title }) {
   return (
     <section className="relative py-8">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center px-2 mb-4">
-        <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-2 sm:mb-0 text-gray-500">{title}</h2>
+        <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-2 sm:mb-0 text-gray-300">{title}</h2>
         <div className="flex gap-2 justify-end">
           <button
             aria-label="Show previous product"
