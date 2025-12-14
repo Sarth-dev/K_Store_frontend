@@ -57,13 +57,6 @@ export default function Main() {
                 Shop Now
               </button>
             </Link>
-
-            <Link href="/categories">
-              <button className="px-7 py-3 border border-white/40 rounded-xl
-                hover:bg-white/10 hover:scale-105 transition-all">
-                Browse Categories
-              </button>
-            </Link>
           </div>
         </div>
       </section>

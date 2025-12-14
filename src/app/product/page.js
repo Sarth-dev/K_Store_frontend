@@ -4,8 +4,6 @@ import ProductCard from "../Components/product/ProductCard";
 import ProductSkeleton from "../Components/product/ProductSkeleton";
 import { useLoader } from "@/app/context/LoaderContext";
 
-
-
 const PRODUCTS_API =
   process.env.NEXT_PUBLIC_API_BASE ||
   "https://k-store-bdz5.onrender.com/api";
@@ -186,9 +184,12 @@ export default function ProductsPage() {
       </aside>
 
       <div className="flex flex-col lg:flex-row gap-8">
-        <aside className="hidden lg:block w-64">
-          <FilterContent />
+        <aside className="hidden lg:block w-64 shrink-0">
+          <div className="sticky top-24">
+            <FilterContent />
+          </div>
         </aside>
+
 
         <div className="flex-1">
           {/* Sort Bar */}
