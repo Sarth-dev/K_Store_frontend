@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
@@ -8,6 +9,7 @@ import ReviewForm from "@/app/Components/utils/review";
 import { useLoader } from "@/app/context/LoaderContext";
 import YouMayLikeThis from "@/app/Components/utils/slider";
 import PincodeCheck from "@/app/Components/utils/pincodeCheck";
+import ImageZoomLens from "@/app/Components/utils/ImageZoomLens";
 import TrustBar from "@/app/Components/utils/trustBar";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
@@ -124,13 +126,9 @@ export default function ProductDetail() {
       <div className="grid md:grid-cols-2 gap-10">
 
         {/* IMAGE GALLERY */}
+        {/* IMAGE GALLERY */}
         <div className="space-y-4">
-          <div className="bg-gray-50 rounded-xl flex justify-center p-4">
-            <img
-              src={images[selectedImage]}
-              className="max-h-[420px] object-contain hover:scale-105 transition"
-            />
-          </div>
+          <ImageZoomLens src={images[selectedImage]} />
 
           <div className="flex gap-3">
             {images.map((img, i) => (
@@ -138,13 +136,14 @@ export default function ProductDetail() {
                 key={i}
                 onClick={() => setSelectedImage(i)}
                 className={`w-20 h-20 border rounded-lg overflow-hidden
-                ${i === selectedImage ? "border-indigo-600" : "border-gray-200"}`}
+        ${i === selectedImage ? "border-indigo-600" : "border-gray-200"}`}
               >
                 <img src={img} className="object-contain w-full h-full" />
               </button>
             ))}
           </div>
         </div>
+
 
         {/* PRODUCT INFO */}
         <div>

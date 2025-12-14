@@ -2,7 +2,7 @@
 
 export default function PulseRingsLoader() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-indigo-50 to-blue-100">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-transparent from-indigo-50 to-blue-100">
       <div className="relative w-32 h-32">
         {/* Pulsing rings */}
         {[0, 1, 2].map((i) => (
