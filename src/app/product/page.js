@@ -19,24 +19,10 @@ const CATEGORIES = [
 
 const PRICES = [
   { id: "under-1000", label: "Under ₹1000", test: (p) => p.price < 1000 },
-  { id: "1000-3000", label: "₹1000 - ₹3000", test: (p) => p.price >= 1000 && p.price <= 3000 },
-  { id: "3000-5000", label: "₹3000 - ₹5000", test: (p) => p.price >= 3000 && p.price <= 5000 },
+  { id: "1000-3000", label: "₹1000 – ₹3000", test: (p) => p.price >= 1000 && p.price <= 3000 },
+  { id: "3000-5000", label: "₹3000 – ₹5000", test: (p) => p.price >= 3000 && p.price <= 5000 },
   { id: "above-5000", label: "Above ₹5000", test: (p) => p.price > 5000 },
 ];
-
-// 📦 Delivery Date Helper
-function getDeliveryDateRange() {
-  const today = new Date();
-  const min = new Date(today);
-  const max = new Date(today);
-
-  min.setDate(today.getDate() + 3);
-  max.setDate(today.getDate() + 4);
-
-  const options = { day: "numeric", month: "short" };
-  return `${min.toLocaleDateString("en-IN", options)} - ${max.toLocaleDateString("en-IN", options)}`;
-}
-
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
@@ -45,36 +31,26 @@ export default function ProductsPage() {
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const [selectedPrices, setSelectedPrices] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
   const { setIsLoading } = useLoader();
-  const deliveryRange = getDeliveryDateRange();
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    async function fetchProducts() {
       try {
         setLoading(true);
         setIsLoading(true);
-
         const res = await fetch(`${PRODUCTS_API}/products`);
-        if (!res.ok) throw new Error("Failed to fetch products");
-
         const data = await res.json();
         setProducts(data);
-        setError("");
-      } catch (err) {
-        setError("Error loading products. Please try again later.");
-        setProducts([]);
       } finally {
         setLoading(false);
         setIsLoading(false);
       }
-    };
-
+    }
     fetchProducts();
   }, [setIsLoading]);
 
-  function handlePriceChange(id) {
+  function togglePrice(id) {
     setSelectedPrices((prev) =>
       prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]
     );
@@ -85,64 +61,67 @@ export default function ProductsPage() {
     setSelectedPrices([]);
   }
 
-  // Filtering
   let filtered = [...products];
 
   if (selectedCategory !== "all") {
     filtered = filtered.filter((p) => p.category === selectedCategory);
   }
 
-  if (selectedPrices.length > 0) {
+  if (selectedPrices.length) {
     filtered = filtered.filter((p) =>
-      selectedPrices.some((pid) => {
-        const rule = PRICES.find((pr) => pr.id === pid);
-        return rule ? rule.test(p) : false;
-      })
+      selectedPrices.some((pid) => PRICES.find((r) => r.id === pid)?.test(p))
     );
   }
 
-  // Sorting
   if (sortBy === "price-low") filtered.sort((a, b) => a.price - b.price);
   if (sortBy === "price-high") filtered.sort((a, b) => b.price - a.price);
 
-  function FilterContent() {
+  function FilterPanel() {
     return (
-      <div className="bg-white p-4 rounded-xl text-gray-800 animate-fadeIn">
-        <h3 className="text-lg font-bold mb-3">Categories</h3>
-        <ul className="space-y-2 mb-6">
-          {CATEGORIES.map((cat) => (
-            <li key={cat.id}>
+      <div className="bg-white rounded-2xl border border-default p-5 space-y-8">
+        {/* CATEGORY */}
+        <div>
+          <h3 className="font-semibold text-base mb-4">Categories</h3>
+          <ul className="space-y-2">
+            {CATEGORIES.map((cat) => (
               <button
+                key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`w-full text-left px-4 py-2 rounded-lg transition-all
-                  ${selectedCategory === cat.id
-                    ? "bg-indigo-600 text-white font-semibold"
-                    : "hover:bg-gray-100 text-gray-700"}`}
+                className={`w-full text-left px-4 py-2 rounded-lg text-sm transition
+                  ${
+                    selectedCategory === cat.id
+                      ? "bg-[rgb(var(--color-primary))] text-white"
+                      : "hover:bg-muted text-secondary"
+                  }`}
               >
                 {cat.name}
               </button>
-            </li>
-          ))}
-        </ul>
+            ))}
+          </ul>
+        </div>
 
-        <h3 className="text-lg font-bold mb-3">Price Range</h3>
-        <div className="space-y-2 mb-6">
-          {PRICES.map((price) => (
-            <label key={price.id} className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={selectedPrices.includes(price.id)}
-                onChange={() => handlePriceChange(price.id)}
-                className="accent-indigo-600"
-              />
-              {price.label}
-            </label>
-          ))}
+        {/* PRICE */}
+        <div>
+          <h3 className="font-semibold text-base mb-4">Price Range</h3>
+          <div className="space-y-2">
+            {PRICES.map((p) => (
+              <label key={p.id} className="flex items-center gap-2 text-sm text-secondary">
+                <input
+                  type="checkbox"
+                  checked={selectedPrices.includes(p.id)}
+                  onChange={() => togglePrice(p.id)}
+                  className="accent-[rgb(var(--color-primary))]"
+                />
+                {p.label}
+              </label>
+            ))}
+          </div>
         </div>
 
         <button
           onClick={clearFilters}
-          className="w-full py-2 bg-gray-100 rounded-lg text-indigo-700 font-semibold hover:bg-gray-200"
+          className="w-full py-2 rounded-lg text-sm font-medium
+          border border-default text-secondary hover:bg-muted"
         >
           Clear Filters
         </button>
@@ -151,54 +130,61 @@ export default function ProductsPage() {
   }
 
   return (
-    <>
-      {/* Breadcrumb */}
-      <div className="text-sm text-gray-500 mb-4">
-        Home / {selectedCategory === "all" ? "All Products" : selectedCategory}
-      </div>
+    <section className="max-w-7xl mx-auto px-4 py-6">
 
-      {/* Mobile Filter Button */}
-      <div className="flex justify-end lg:hidden mb-4">
+      {/* HEADER */}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-xl md:text-2xl font-bold">
+          {selectedCategory === "all" ? "All Products" : selectedCategory}
+        </h1>
+
         <button
+          className="lg:hidden px-4 py-2 rounded-lg bg-[rgb(var(--color-primary))] text-white text-sm"
           onClick={() => setMobileFilterOpen(true)}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-lg font-semibold"
         >
           Filters
         </button>
       </div>
 
-      {/* Mobile Filter Drawer */}
+      {/* MOBILE FILTER */}
       {mobileFilterOpen && (
-        <div className="fixed inset-0 z-40 bg-black/40" onClick={() => setMobileFilterOpen(false)} />
+        <div className="fixed inset-0 bg-black/40 z-40" onClick={() => setMobileFilterOpen(false)} />
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-80 bg-white p-6 shadow-2xl transform transition-transform
-          ${mobileFilterOpen ? "translate-x-0" : "-translate-x-full"} lg:hidden`}
+        className={`fixed top-0 left-0 h-full w-80 bg-white z-50 p-6 transition-transform lg:hidden
+          ${mobileFilterOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-bold">Filters</h3>
-          <button onClick={() => setMobileFilterOpen(false)} className="text-2xl">&times;</button>
+          <h3 className="font-semibold text-lg">Filters</h3>
+          <button onClick={() => setMobileFilterOpen(false)}>✕</button>
         </div>
-        <FilterContent />
+        <FilterPanel />
       </aside>
 
-      <div className="flex flex-col lg:flex-row gap-8">
-        <aside className="hidden lg:block w-64 shrink-0">
-          <div className="sticky top-24">
-            <FilterContent />
+      {/* LAYOUT */}
+      <div className="flex gap-8">
+
+        {/* DESKTOP FILTER */}
+        <aside className="hidden lg:block w-72 shrink-0">
+          <div className="sticky top-28">
+            <FilterPanel />
           </div>
         </aside>
 
+        {/* PRODUCTS */}
+        <main className="flex-1">
 
-        <div className="flex-1">
-          {/* Sort Bar */}
-          <div className="bg-white p-4 rounded-xl shadow-sm flex justify-between items-center mb-6">
-            <p className="text-gray-600">Showing {filtered.length} products</p>
+          {/* SORT BAR */}
+          <div className="flex items-center justify-between mb-6 bg-white p-4 rounded-xl border border-default">
+            <p className="text-sm text-secondary">
+              Showing {filtered.length} products
+            </p>
+
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="border text-gray-500 px-3 py-2 rounded-lg"
+              className="text-sm px-3 py-2 rounded-lg border border-default text-secondary"
             >
               <option value="featured">Featured</option>
               <option value="price-low">Price: Low to High</option>
@@ -206,30 +192,26 @@ export default function ProductsPage() {
             </select>
           </div>
 
-          {/* Products */}
+          {/* GRID */}
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
               {Array.from({ length: 6 }).map((_, i) => (
                 <ProductSkeleton key={i} />
               ))}
             </div>
-          ) : filtered.length > 0 ? (
+          ) : filtered.length ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
               {filtered.map((product) => (
-                <ProductCard
-                  key={product._id}
-                  product={product}
-                  deliveryRange={deliveryRange}
-                />
+                <ProductCard key={product._id} product={product} />
               ))}
             </div>
           ) : (
-            <p className="text-center text-gray-500 py-12">
-              No products found for this filter.
-            </p>
+            <div className="text-center py-20 text-secondary">
+              No products found.
+            </div>
           )}
-        </div>
+        </main>
       </div>
-    </>
+    </section>
   );
 }

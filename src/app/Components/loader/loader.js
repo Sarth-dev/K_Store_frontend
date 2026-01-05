@@ -29,7 +29,7 @@ export default function PulseRingsLoader() {
         </div>
       </div>
 
-      <p className="mt-12 text-xl font-semibold text-gray-800">K Store</p>
+      <p className="mt-12 text-xl font-semibold text-gray-800">Ravendelle</p>
       <p className="text-gray-500 mt-2 animate-pulse">
         Loading amazing products...
       </p>
