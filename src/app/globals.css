@@ -1,52 +1,133 @@
 @import "tailwindcss";
 
+/* ============================= */
+/* 🌐 GLOBAL DESIGN TOKENS */
+/* ============================= */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ---------- BRAND COLORS ---------- */
+  --color-primary: 79 70 229;        /* indigo-600 */
+  --color-primary-hover: 67 56 202;  /* indigo-700 */
+  --color-secondary: 15 23 42;       /* slate-900 */
+
+  /* ---------- BACKGROUNDS ---------- */
+  --color-bg: 255 255 255;           /* white */
+  --color-bg-muted: 248 250 252;     /* slate-50 */
+  --color-bg-elevated: 255 255 255;  /* cards */
+
+  /* ---------- TEXT ---------- */
+  --color-text-primary: 15 23 42;    /* slate-900 */
+  --color-text-secondary: 71 85 105; /* slate-600 */
+  --color-text-muted: 148 163 184;   /* slate-400 */
+
+  /* ---------- BORDERS ---------- */
+  --color-border: 226 232 240;       /* slate-200 */
+
+  /* ---------- STATUS ---------- */
+  --color-success: 16 185 129;       /* emerald-500 */
+  --color-warning: 245 158 11;       /* amber-500 */
+  --color-error: 239 68 68;          /* red-500 */
+
+  /* ---------- SHADOW ---------- */
+  --shadow-soft: 0 4px 14px rgba(0, 0, 0, 0.08);
+  --shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.12);
+
+  /* ---------- RADIUS ---------- */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
 }
 
-
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* ============================= */
+/* 🌙 DARK MODE */
+/* ============================= */
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --color-bg: 2 6 23;              /* slate-950 */
+    --color-bg-muted: 15 23 42;      /* slate-900 */
+    --color-bg-elevated: 15 23 42;
+
+    --color-text-primary: 241 245 249; /* slate-100 */
+    --color-text-secondary: 148 163 184;
+    --color-text-muted: 100 116 139;
+
+    --color-border: 30 41 59;        /* slate-800 */
   }
 }
 
+/* ============================= */
+/* 🧱 BASE STYLES */
+/* ============================= */
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: rgb(var(--color-bg));
+  color: rgb(var(--color-text-primary));
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji",
+    "Segoe UI Emoji";
+  -webkit-font-smoothing: antialiased;
 }
+
+/* ============================= */
+/* ✨ UTILITIES */
+/* ============================= */
+
+.bg-surface {
+  background-color: rgb(var(--color-bg-elevated));
+}
+
+.bg-muted {
+  background-color: rgb(var(--color-bg-muted));
+}
+
+.text-muted {
+  color: rgb(var(--color-text-muted));
+}
+
+.text-secondary {
+  color: rgb(var(--color-text-secondary));
+}
+
+.border-default {
+  border-color: rgb(var(--color-border));
+}
+
+.shadow-soft {
+  box-shadow: var(--shadow-soft);
+}
+
+.shadow-medium {
+  box-shadow: var(--shadow-medium);
+}
+
+/* ============================= */
+/* 🎞️ ANIMATIONS */
+/* ============================= */
 
 @keyframes fadeIn {
   from { opacity: 0 }
   to { opacity: 1 }
 }
+
 .animate-fadeIn {
-  animation: fadeIn 0.8s ease-in-out both;
+  animation: fadeIn 0.6s ease-out both;
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(30px) }
+  from { opacity: 0; transform: translateY(24px) }
   to { opacity: 1; transform: translateY(0) }
 }
+
 .animate-slideUp {
-  animation: slideUp 0.9s ease-out both;
+  animation: slideUp 0.7s ease-out both;
 }
 
 @keyframes float {
   0%, 100% { transform: translateY(0) }
-  50% { transform: translateY(-10px) }
+  50% { transform: translateY(-8px) }
 }
+
 .animate-float {
   animation: float 3s ease-in-out infinite;
 }

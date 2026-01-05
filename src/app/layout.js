@@ -6,7 +6,7 @@ import Footer from "./foundation/Footer";
 import "./globals.css";
 
 export const metadata = {
-  title: "K-Store | All Essentials at One Place",
+  title: "Ravendelle | All Essentials at One Place",
   description:
     "Buy affordable containers, kitchen storage, organizers, home essentials with fast delivery.",
   keywords: "kitchen storage, home organizers, containers, ecommerce",

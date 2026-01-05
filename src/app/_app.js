@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
+
 import { useState, useEffect } from "react";
 import ProductCard from "./Components/product/ProductCard";
 import Link from "next/link";
@@ -13,19 +14,16 @@ export default function Main() {
   const [newArrivals, setNewArrivals] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const res = await fetch(`${API_BASE}/products`);
         const products = await res.json();
-
         setNewArrivals(products.slice(0, 4));
         setFeaturedProducts(products.slice(0, 6));
-      } catch (err) {
-        setError("Failed to load products");
-      } finally {
+      } catch {}
+      finally {
         setLoading(false);
       }
     };
@@ -35,26 +33,35 @@ export default function Main() {
   return (
     <>
       {/* ================= HERO ================= */}
-      <section className="relative mb-20 rounded-2xl overflow-hidden animate-fadeIn">
+      <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-[url(/ware.avif)] bg-cover bg-center scale-105" />
-        <div className="absolute inset-0 bg-gradient-to-r from-indigo-900/90 via-indigo-800/70 to-indigo-700/40" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/20" />
 
-        <div className="relative px-6 py-20 sm:px-12 md:px-20 text-white animate-slideUp">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight max-w-2xl">
-            Discover Smart Deals at{" "}
-            <span className="text-indigo-300">K Store</span>
+        <div className="relative max-w-7xl mx-auto px-6 py-28 text-white">
+          <span className="inline-block mb-4 px-4 py-1 text-sm rounded-full bg-white/10 backdrop-blur">
+            Trusted by 10,000+ shoppers
+          </span>
+
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight max-w-3xl">
+            Smart shopping, <br />
+            <span className="text-indigo-300">done right.</span>
           </h1>
 
-          <p className="mt-6 text-base sm:text-lg text-indigo-100 max-w-xl">
-            Premium products, unbeatable prices, and a seamless shopping
-            experience — all in one place.
+          <p className="mt-6 text-lg text-gray-200 max-w-xl">
+            Premium products, fast delivery, and reliable support —
+            everything you expect from a modern online store.
           </p>
 
-          <div className="mt-8 flex gap-4">
+          <div className="mt-10 flex gap-4">
             <Link href="/product">
-              <button className="px-7 py-3 bg-indigo-500 rounded-xl font-semibold shadow-lg
-                hover:bg-indigo-600 hover:scale-105 hover:shadow-indigo-500/50 transition-all duration-300">
+              <button className="px-8 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 transition font-semibold shadow-lg">
                 Shop Now
+              </button>
+            </Link>
+
+            <Link href="/product">
+              <button className="px-8 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition font-semibold">
+                Browse Categories
               </button>
             </Link>
           </div>
@@ -62,46 +69,46 @@ export default function Main() {
       </section>
 
       {/* ================= CATEGORIES ================= */}
-      <section className="my-20 px-4 animate-fadeIn">
-        <h2 className="text-3xl font-bold text-gray-100 mb-10 border-b-4 border-indigo-600 w-fit">
-          Shop by Category
+      <section className="max-w-7xl mx-auto px-6 py-20">
+        <h2 className="text-2xl md:text-3xl font-bold mb-10">
+          Shop by category
         </h2>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
           {[
-            { name: "Home & Kitchen", image: "/category_img/Kitchen.jpeg", slug: "home" },
+            { name: "Home", image: "/category_img/Kitchen.jpeg", slug: "home" },
             { name: "Storage", image: "/category_img/Storage.jpeg", slug: "storage" },
             { name: "Electronics", image: "/category_img/electronics.jpeg", slug: "electronics" },
             { name: "Fitness", image: "/category_img/Fitness.jpeg", slug: "fitness" },
             { name: "Accessories", image: "/category_img/Accessories.jpeg", slug: "accessories" },
             { name: "Fashion", image: "/category_img/Fashion.jpeg", slug: "fashion" },
-          ].map((cat, i) => (
+          ].map((cat) => (
             <Link
-              key={i}
+              key={cat.slug}
               href={`/product?category=${cat.slug}`}
-              className="group bg-white rounded-xl p-4 text-center shadow-sm
-              hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              className="group flex flex-col items-center gap-3 p-4 rounded-2xl
+              hover:bg-gray-50 transition"
             >
-              <div className="h-24 flex items-center justify-center mb-3 bg-slate-50 rounded-lg overflow-hidden">
+              <div className="h-24 w-24 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
                 <img
                   src={cat.image}
                   alt={cat.name}
-                  className="object-contain h-full group-hover:scale-110 transition-transform duration-300"
+                  className="h-14 object-contain group-hover:scale-110 transition"
                 />
               </div>
-              <h3 className="text-sm font-semibold text-gray-800 group-hover:text-indigo-600">
+              <p className="text-sm font-medium text-gray-800">
                 {cat.name}
-              </h3>
+              </p>
             </Link>
           ))}
         </div>
       </section>
 
       {/* ================= NEW ARRIVALS ================= */}
-      <section className="my-20 animate-fadeIn">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-gray-100 mb-10 border-b-4 border-indigo-600 w-fit">
-            New Arrivals
+      <section className="bg-gray-50 py-20">
+        <div className="max-w-7xl mx-auto px-6">
+          <h2 className="text-2xl md:text-3xl font-bold mb-10">
+            New arrivals
           </h2>
 
           {loading ? (
@@ -110,17 +117,16 @@ export default function Main() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
-                {newArrivals.map(p => (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+                {newArrivals.map((p) => (
                   <ProductCard key={p._id} product={p} />
                 ))}
               </div>
 
               <div className="text-center mt-12">
                 <Link href="/product">
-                  <button className="px-8 py-3 bg-indigo-600 text-white rounded-full font-semibold
-                    hover:bg-indigo-700 hover:scale-105 transition-all">
-                    View All Products
+                  <button className="px-8 py-3 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition">
+                    View all products
                   </button>
                 </Link>
               </div>
@@ -129,52 +135,24 @@ export default function Main() {
         </div>
       </section>
 
-      {/* ================= OFFER ================= */}
-      <section className="relative bg-gradient-to-r from-orange-500 to-pink-500 rounded-2xl my-20 overflow-hidden animate-fadeIn">
-        <div className="max-w-6xl mx-auto px-6 py-14 flex flex-col md:flex-row items-center gap-10">
-          <div className="flex-1 text-white">
-            <h3 className="text-4xl font-extrabold mb-3">
-              Mega Sale{" "}
-              <span className="bg-white/20 px-2 rounded animate-pulse">
-                Up to 60% OFF
-              </span>
-            </h3>
-            <p className="text-lg mb-6">
-              Limited time offers on best-selling products.
-            </p>
-            <Link href="/product">
-              <button className="px-7 py-3 bg-white text-orange-600 rounded-full font-semibold
-                hover:bg-orange-100 hover:scale-105 transition-all">
-                Shop the Offer
-              </button>
-            </Link>
-          </div>
-
-          <div className="flex-1 flex justify-center">
-            <img
-              src="/offer_banner.avif"
-              alt="Offer"
-              className="h-52 animate-float drop-shadow-xl"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* ================= SOCIAL PROOF ================= */}
-      <section className="my-16 animate-fadeIn">
-        <SocialProof />
-      </section>
-
       {/* ================= FEATURED ================= */}
       {!loading && featuredProducts.length > 0 && (
-        <section className="my-20 animate-fadeIn">
-          <YouMayLikeThis products={featuredProducts} title="Featured Products" />
+        <section className="max-w-7xl mx-auto px-6 py-20">
+          <YouMayLikeThis
+            products={featuredProducts}
+            title="Featured products"
+          />
         </section>
       )}
 
-      {/* ================= ASSURED ================= */}
-      <section className="my-20 animate-fadeIn">
+      {/* ================= TRUST ================= */}
+      <section className="py-20">
         <FeaturesSection />
+      </section>
+
+      {/* ================= SOCIAL PROOF ================= */}
+      <section className="py-16">
+        <SocialProof />
       </section>
     </>
   );
