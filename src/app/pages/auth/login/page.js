@@ -1,26 +1,24 @@
-/* eslint-disable react/no-unescaped-entities */
 "use client";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
+import { useAuth } from "@/app/context/AuthContext";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const { login } = useAuth();
+
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  const API_URL = process.env.NEXT_PUBLIC_API_BASE;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setError("");
   };
-
-  const API_URL = process.env.NEXT_PUBLIC_API_BASE;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,119 +26,88 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const response = await fetch(`${API_URL}/auth/login`, {
+      const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
+      const data = await res.json();
 
-      if (response.ok) {
-        // Store token in localStorage
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data));
+      if (!res.ok) throw new Error(data.message || "Invalid credentials");
 
-        // Redirect to home or dashboard
-        router.push("/");
-      } else {
-        setError(data.message || "Login failed");
-      }
+      login(data);
+      router.push("/");
     } catch (err) {
-      setError("Something went wrong. Please try again.");
-      console.error("Login error:", err);
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-   
-      <div className="min-h-screen text-gray-800
-       bg-linear-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12">
-        <div className="max-w-md w-full px-4">
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <h1 className="text-3xl font-bold text-center text-gray-800 mb-2">
-              Welcome Back
-            </h1>
-            <p className="text-center text-gray-600 mb-8">
-              Login to your account to continue
-            </p>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-white flex items-center justify-center px-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+        <h1 className="text-3xl font-bold text-center mb-2">Welcome Back</h1>
+        <p className="text-center text-gray-500 mb-6">
+          Login to continue shopping
+        </p>
 
-            {error && (
-              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
-                {error}
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label className="block text-gray-700 font-semibold mb-2">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  placeholder="Enter your email"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-semibold mb-2">
-                  Password
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                    placeholder="Enter your password"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-2.5 text-gray-600 hover:text-gray-800"
-                  >
-                    {showPassword ? "Hide" : "Show"}
-                  </button>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? "Logging in..." : "Login"}
-              </button>
-            </form>
-
-            <div className="mt-6 text-center space-y-3">
-              <Link
-                href="/forgot-password"
-                className="text-blue-600 hover:underline text-sm block"
-              >
-                Forgot password?
-              </Link>
-              <p className="text-gray-600">
-                Don't have an account?{" "}
-                <Link href="/pages/auth/register" className="text-blue-600 font-semibold hover:underline">
-                  Register here
-                </Link>
-              </p>
-            </div>
+        {error && (
+          <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-sm">
+            {error}
           </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <input
+            type="email"
+            name="email"
+            placeholder="Email address"
+            required
+            onChange={handleChange}
+            className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500"
+          />
+
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Password"
+              required
+              onChange={handleChange}
+              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-3 text-sm text-gray-500"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
+
+          <button
+            disabled={loading}
+            className="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition"
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+
+        <div className="mt-6 text-center text-sm">
+          <Link href="/forgot-password" className="text-indigo-600 hover:underline">
+            Forgot password?
+          </Link>
+
+          <p className="mt-3 text-gray-600">
+            Don’t have an account?{" "}
+            <Link href="/pages/auth/register" className="text-indigo-600 font-semibold">
+              Register
+            </Link>
+          </p>
         </div>
       </div>
-   
+    </div>
   );
 }

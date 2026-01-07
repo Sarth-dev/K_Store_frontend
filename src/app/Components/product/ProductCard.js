@@ -1,35 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
+
 export default function ProductCard({ product }) {
   const router = useRouter();
-
-  const handleAddToCart = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (!product || !product._id) return;
-
-    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-    const index = cart.findIndex((i) => i._id === product._id);
-
-    if (index > -1) {
-      cart[index].quantity += 1;
-    } else {
-      cart.push({
-        _id: product._id,
-        name: product.name,
-        price: product.price,
-        image: product.image,
-        quantity: 1,
-      });
-    }
-
-    localStorage.setItem("cart", JSON.stringify(cart));
-    router.push("/pages/carts");
-  };
 
   const imageUrl =
     product?.images?.length ? product.images[0] : product?.image || "";
@@ -43,24 +21,64 @@ export default function ProductCard({ product }) {
         )
       : 0;
 
+  const handleAddToCart = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!product?._id) return;
+
+    const token = localStorage.getItem("token");
+
+    // ✅ LOGGED-IN → BACKEND CART
+    if (token) {
+      await fetch(`${API_BASE}/cart`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          productId: product._id,
+          quantity: 1,
+        }),
+      });
+    }
+    // ✅ GUEST → LOCAL STORAGE CART
+    else {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const existing = cart.find((i) => i._id === product._id);
+
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        cart.push({
+          _id: product._id,
+          name: product.name,
+          price: product.price,
+          image: imageUrl,
+          quantity: 1,
+        });
+      }
+
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
+
+    // optional UX improvement
+    router.push("/pages/carts");
+  };
+
   return (
-    <div className="group bg-white rounded-xl border border-gray-100 
-      hover:shadow-lg transition-all duration-300 
-      flex flex-col overflow-hidden h-full">
+    <div className="group relative bg-white rounded-2xl 
+      border border-gray-100 overflow-hidden
+      transition hover:shadow-xl hover:-translate-y-0.5">
 
-      <Link
-        href={`/product/${product._id}`}
-        className="flex flex-col h-full overflow-hidden"
-      >
+      <Link href={`/product/${product._id}`} className="block h-full">
         {/* IMAGE */}
-        <div className="relative h-[150px] sm:h-[170px] md:h-[190px] 
-          bg-slate-50 flex items-center justify-center 
-          overflow-hidden">
-
+        <div className="relative h-[180px] bg-gradient-to-b from-gray-50 to-white flex items-center justify-center">
           {discountPercent > 0 && (
-            <span className="absolute top-2 left-2 z-10
-              bg-indigo-600 text-white text-[10px] px-2 py-0.5 
-              rounded font-semibold">
+            <span className="absolute top-3 left-3 
+              bg-indigo-600 text-white text-xs font-bold 
+              px-3 py-1 rounded-full shadow">
               {discountPercent}% OFF
             </span>
           )}
@@ -69,37 +87,34 @@ export default function ProductCard({ product }) {
             <img
               src={imageUrl}
               alt={product.name}
-              className="max-h-full max-w-full object-contain 
-                transition-transform duration-200 
-                group-hover:scale-105"
+              className="max-h-[150px] object-contain 
+                transition-transform duration-300 
+                group-hover:scale-110"
               loading="lazy"
-              draggable={false}
             />
           ) : (
-            <span className="text-gray-400 text-xs">No Image</span>
+            <span className="text-xs text-gray-400">No Image</span>
           )}
         </div>
 
         {/* CONTENT */}
-        <div className="flex flex-col flex-1 px-3 py-3 gap-1 overflow-hidden">
-          <h3 className="text-sm sm:text-base font-medium text-gray-900 
-            line-clamp-2 min-h-[2.4em]">
+        <div className="p-4 flex flex-col gap-2">
+          <h3 className="text-sm font-semibold text-gray-900 line-clamp-2">
             {product.name}
           </h3>
 
           <p className="text-xs text-gray-500 line-clamp-1">
-            {product.description || "No description"}
+            {product.description || "Premium quality product"}
           </p>
 
-          {/* PRICE + CTA */}
-          <div className="mt-auto flex items-center justify-between pt-2 gap-2">
-            <div className="overflow-hidden">
-              <div className="text-sm sm:text-base font-bold text-indigo-700 truncate">
+          {/* PRICE */}
+          <div className="flex items-end justify-between mt-3">
+            <div>
+              <div className="text-lg font-extrabold text-indigo-700">
                 ₹{product.price?.toLocaleString()}
               </div>
-
               {product.originalPrice && (
-                <div className="text-[11px] text-gray-400 line-through truncate">
+                <div className="text-xs text-gray-400 line-through">
                   ₹{product.originalPrice?.toLocaleString()}
                 </div>
               )}
@@ -107,9 +122,8 @@ export default function ProductCard({ product }) {
 
             <button
               onClick={handleAddToCart}
-              className="shrink-0 text-[11px] sm:text-xs 
-                px-3 py-1 rounded font-semibold
-                text-indigo-700 border border-indigo-600
+              className="px-4 py-1.5 text-xs font-bold rounded-full
+                border border-indigo-600 text-indigo-700
                 hover:bg-indigo-600 hover:text-white transition"
               tabIndex={-1}
             >

@@ -1,5 +1,6 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
+
 import Link from "next/link";
 import { useState } from "react";
 
@@ -7,19 +8,17 @@ function FooterAccordion({ title, children }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="md:mb-0 mb-4 text-center md:text-left">
+    <div className="md:space-y-4">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between md:justify-start
-        text-lg font-semibold md:cursor-default md:mb-4 mb-2 py-2
-        md:p-0 bg-gray-800 md:bg-transparent rounded-lg px-4 md:px-0"
+        className="md:hidden w-full flex items-center justify-between py-3 font-semibold text-gray-200"
         type="button"
       >
-        <span className="mx-auto md:mx-0">{title}</span>
-        <span className="md:hidden text-xl">{open ? "−" : "+"}</span>
+        {title}
+        <span className="text-lg">{open ? "−" : "+"}</span>
       </button>
 
-      <div className={`md:block ${open ? "block" : "hidden"}`}>
+      <div className={`${open ? "block" : "hidden"} md:block`}>
         {children}
       </div>
     </div>
@@ -28,104 +27,97 @@ function FooterAccordion({ title, children }) {
 
 export default function Footer() {
   return (
-    <footer className="bg-gradient-to-b from-gray-900 to-gray-950 text-gray-300 mt-24">
-      <div className="max-w-7xl mx-auto px-6 py-14">
+    <footer className="bg-[#0f172a] text-gray-300 mt-24">
+      <div className="max-w-7xl mx-auto px-6 py-16">
 
         {/* TOP GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 text-center md:text-left">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
 
           {/* BRAND */}
-          <div className="flex flex-col items-center md:items-start">
+          <div>
             <img
-              src="/K_Store_Logo.webp"
-              alt="K Store"
-              className="w-20 mb-4"
+              src="/New_Logo2.jfif"
+              alt="Ravendelle"
+              className="w-56 mb-5 rounded-md"
             />
+
             <p className="text-sm text-gray-400 leading-relaxed max-w-xs">
-              K Store is your trusted destination for quality products,
-              fast delivery, and reliable customer support.
+              Ravendelle is a modern shopping destination offering premium
+              products, fast delivery, and a trusted customer experience.
             </p>
 
-            <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-4">
-              <span className="text-xs bg-gray-800 px-3 py-1 rounded-full">
-                🔒 Secure
-              </span>
-              <span className="text-xs bg-gray-800 px-3 py-1 rounded-full">
-                🚚 Fast Delivery
-              </span>
-              <span className="text-xs bg-gray-800 px-3 py-1 rounded-full">
-                ↩ Easy Returns
-              </span>
+            {/* TRUST TAGS */}
+            <div className="flex flex-wrap gap-3 mt-5">
+              {["Secure Payments", "Fast Delivery", "Easy Returns"].map((t) => (
+                <span
+                  key={t}
+                  className="text-xs border border-white/10 px-3 py-1 rounded-full text-gray-300"
+                >
+                  {t}
+                </span>
+              ))}
             </div>
           </div>
 
           {/* QUICK LINKS */}
           <FooterAccordion title="Quick Links">
-            <ul className="space-y-2 text-sm text-center md:text-left">
-              {[
-                { href: "/Services/quick/about", label: "About Us" },
-                { href: "/Services/quick/contact", label: "Contact Us" },
-                { href: "/Services/quick/faq", label: "FAQs" },
-                { href: "/Services/quick/shipping", label: "Shipping Information" },
-              ].map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="hover:text-white transition hover:translate-x-1 inline-block"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
+            <ul className="space-y-3 text-sm">
+              <li><Link href="/Services/quick/about" className="hover:text-white">About Us</Link></li>
+              <li><Link href="/Services/quick/contact" className="hover:text-white">Contact Us</Link></li>
+              <li><Link href="/Services/quick/faq" className="hover:text-white">FAQs</Link></li>
+              <li><Link href="/Services/quick/shipping" className="hover:text-white">Shipping Info</Link></li>
             </ul>
           </FooterAccordion>
 
           {/* CUSTOMER SERVICE */}
           <FooterAccordion title="Customer Service">
-            <ul className="space-y-2 text-sm text-center md:text-left">
-              {[
-                { href: "/Services/customer-service/returns", label: "Returns & Refunds" },
-                { href: "/Services/customer-service/terms", label: "Terms & Conditions" },
-                { href: "/Services/customer-service/privacy", label: "Privacy Policy" },
-                { href: "/Services/customer-service/support", label: "Customer Support" },
-              ].map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="hover:text-white transition hover:translate-x-1 inline-block"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
+            <ul className="space-y-3 text-sm">
+              <li><Link href="/Services/customer-service/returns" className="hover:text-white">Returns & Refunds</Link></li>
+              <li><Link href="/Services/customer-service/terms" className="hover:text-white">Terms & Conditions</Link></li>
+              <li><Link href="/Services/customer-service/privacy" className="hover:text-white">Privacy Policy</Link></li>
+              <li><Link href="/Services/customer-service/support" className="hover:text-white">Support</Link></li>
             </ul>
           </FooterAccordion>
 
           {/* CONTACT */}
-          <div className="text-center md:text-left">
-            <h4 className="text-lg font-semibold mb-4">Contact Us</h4>
+          <div>
+            <h4 className="text-lg font-semibold mb-4 text-white">
+              Contact
+            </h4>
             <ul className="space-y-3 text-sm text-gray-400">
-              <li>📧 support@kstore.com</li>
-              <li>📞 +91 12345 67890</li>
-              <li>📍 Chhatrapati Sambhajinagar, Maharashtra</li>
+              <li>support@ravendelle.com</li>
+              <li>+91 12345 67890</li>
+              <li>Chhatrapati Sambhajinagar, MH</li>
               <li className="text-xs text-gray-500">
-                Mon – Sat | 9:00 AM – 6:00 PM
+                Mon – Sat · 9:00 AM – 6:00 PM
               </li>
             </ul>
           </div>
         </div>
 
-        {/* TRUST BAR */}
-        <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center text-sm">
-          <div className="bg-gray-800 rounded-lg py-3">🔐 Secure Payments</div>
-          <div className="bg-gray-800 rounded-lg py-3">💳 COD Available</div>
-          <div className="bg-gray-800 rounded-lg py-3">🚚 3–4 Day Delivery</div>
-          <div className="bg-gray-800 rounded-lg py-3">↩ 7-Day Returns</div>
+        {/* DIVIDER */}
+        <div className="border-t border-white/10 my-12"></div>
+
+        {/* TRUST STRIP */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-sm text-center">
+          {[
+            "🔐 Secure Payments",
+            "💳 COD Available",
+            "🚚 Fast Shipping",
+            "↩ 7-Day Returns",
+          ].map((item) => (
+            <div
+              key={item}
+              className="border border-white/10 rounded-xl py-4 text-gray-300"
+            >
+              {item}
+            </div>
+          ))}
         </div>
 
         {/* BOTTOM BAR */}
-        <div className="border-t border-gray-800 mt-12 pt-6 text-center text-sm text-gray-500">
-          <p>© {new Date().getFullYear()} K Store. All rights reserved.</p>
+        <div className="mt-12 text-center text-sm text-gray-500">
+          © {new Date().getFullYear()} Ravendelle. All rights reserved.
         </div>
       </div>
     </footer>

@@ -33,7 +33,7 @@ export default function Header() {
     }
 
     const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-    setCartCount(cart.length);
+   setCartCount(cart.reduce((sum, i) => sum + i.quantity, 0));
   }, []);
 
   /* CLOSE DROPDOWNS ON OUTSIDE CLICK */

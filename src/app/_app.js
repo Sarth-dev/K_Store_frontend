@@ -137,7 +137,7 @@ export default function Main() {
 
       {/* ================= FEATURED ================= */}
       {!loading && featuredProducts.length > 0 && (
-        <section className="max-w-7xl mx-auto px-6 py-20">
+        <section className="max-w-full mx-auto px-6 py-20 overflow-x-scroll">
           <YouMayLikeThis
             products={featuredProducts}
             title="Featured products"
@@ -146,12 +146,12 @@ export default function Main() {
       )}
 
       {/* ================= TRUST ================= */}
-      <section className="py-20">
+      <section className="">
         <FeaturesSection />
       </section>
 
       {/* ================= SOCIAL PROOF ================= */}
-      <section className="py-16">
+      <section className="">
         <SocialProof />
       </section>
     </>
