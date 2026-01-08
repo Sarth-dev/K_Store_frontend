@@ -36,7 +36,7 @@ export default function Footer() {
           {/* BRAND */}
           <div>
             <img
-              src="/New_Logo2.jfif"
+              src="/New_Logo2.png"
               alt="Ravendelle"
               className="w-56 mb-5 rounded-md"
             />
