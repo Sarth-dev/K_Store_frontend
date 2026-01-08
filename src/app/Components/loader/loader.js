@@ -1,51 +1,53 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
-export default function PulseRingsLoader() {
+export default function Loader() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-transparent from-indigo-50 to-blue-100">
-      <div className="relative w-32 h-32">
-        {/* Pulsing rings */}
-        {[0, 1, 2].map((i) => (
-          <div
-            key={i}
-            className="absolute inset-0 rounded-full border-2 border-blue-500"
-            style={{
-              animation: `pulse-ring 2s ease-out infinite`,
-              animationDelay: `${i * 0.6}s`,
-              opacity: 1 - i * 0.3,
-            }}
-          ></div>
-        ))}
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-blue-50">
+      <div className="relative flex flex-col items-center">
 
-        {/* Center icon */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <svg
-            className="w-12 h-12 text-blue-600 animate-bounce"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 6H6.28l-.31-1.243A1 1 0 005 4H3z" />
-          </svg>
+        {/* Pulsing Rings */}
+        <div className="relative w-40 h-40">
+          {[0, 1, 2].map((i) => (
+            <span
+              key={i}
+              className="absolute inset-0 rounded-full border border-indigo-300/40"
+              style={{
+                animation: "pulse 2.8s ease-out infinite",
+                animationDelay: `${i * 0.6}s`,
+              }}
+            />
+          ))}
+
+          {/* Center Card */}
+          <div className="absolute inset-8 rounded-2xl bg-white/70 backdrop-blur-xl shadow-xl border border-white/50 flex items-center justify-center">
+            <span className="text-2xl font-extrabold bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">
+             <img src="/New_Logo2.jfif" alt="Ravendelle"/>
+            </span>
+          </div>
         </div>
+
+        <h1 className="mt-10 text-2xl font-extrabold text-gray-900">
+          Ravendelle
+        </h1>
+
+        <p className="mt-2 text-sm text-gray-500 animate-pulse">
+          Loading premium experience…
+        </p>
+
+        <style jsx>{`
+          @keyframes pulse {
+            0% {
+              transform: scale(0.6);
+              opacity: 0.8;
+            }
+            100% {
+              transform: scale(1.8);
+              opacity: 0;
+            }
+          }
+        `}</style>
       </div>
-
-      <p className="mt-12 text-xl font-semibold text-gray-800">Ravendelle</p>
-      <p className="text-gray-500 mt-2 animate-pulse">
-        Loading amazing products...
-      </p>
-
-      <style jsx>{`
-        @keyframes pulse-ring {
-          0% {
-            transform: scale(0.5);
-            opacity: 1;
-          }
-          100% {
-            transform: scale(2);
-            opacity: 0;
-          }
-        }
-      `}</style>
     </div>
   );
 }

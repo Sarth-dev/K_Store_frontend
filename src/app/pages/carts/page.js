@@ -10,35 +10,29 @@ export default function CartPage() {
   const [cart, setCart] = useState({ items: [], totalPrice: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [user, setUser] = useState(null);
 
-  // Fetch cart on mount
+  /* =========================
+     LOAD CART
+  ========================== */
   useEffect(() => {
     const fetchCart = async () => {
       try {
         setLoading(true);
         const token = localStorage.getItem("token");
-        const userData = localStorage.getItem("user");
 
         if (!token) {
           router.push("/pages/auth/login");
           return;
         }
 
-        if (userData) {
-          setUser(JSON.parse(userData));
-        }
-
         const data = await cartApi.getCart();
-        // Ensure items is always an array
         setCart({
           items: data.items || [],
           totalPrice: data.totalPrice || 0,
         });
       } catch (err) {
-        console.error("Error loading cart:", err);
+        console.error(err);
         setError("Failed to load cart");
-        // Set default empty cart on error
         setCart({ items: [], totalPrice: 0 });
       } finally {
         setLoading(false);
@@ -48,6 +42,9 @@ export default function CartPage() {
     fetchCart();
   }, [router]);
 
+  /* =========================
+     UPDATE QUANTITY
+  ========================== */
   const handleUpdateQuantity = async (productId, quantity) => {
     try {
       if (quantity <= 0) {
@@ -59,12 +56,14 @@ export default function CartPage() {
         items: updatedCart.items || [],
         totalPrice: updatedCart.totalPrice || 0,
       });
-    } catch (err) {
+    } catch {
       setError("Failed to update cart");
-      console.error(err);
     }
   };
 
+  /* =========================
+     REMOVE ITEM
+  ========================== */
   const handleRemoveItem = async (productId) => {
     try {
       const updatedCart = await cartApi.removeFromCart(productId);
@@ -72,184 +71,170 @@ export default function CartPage() {
         items: updatedCart.items || [],
         totalPrice: updatedCart.totalPrice || 0,
       });
-    } catch (err) {
+    } catch {
       setError("Failed to remove item");
-      console.error(err);
     }
   };
 
+  /* =========================
+     CHECKOUT
+  ========================== */
   const handleCheckout = () => {
-    if (cart.items && cart.items.length > 0) {
-      // Store cart in localStorage for checkout page
-      localStorage.setItem("checkoutCart", JSON.stringify(cart));
-      router.push("/pages/checkout");
-    } else {
+    if (!cart.items.length) {
       setError("Cart is empty");
+      return;
     }
+
+    localStorage.setItem("checkoutCart", JSON.stringify(cart));
+    router.push("/pages/checkout");
   };
 
+  /* =========================
+     LOADING
+  ========================== */
   if (loading) {
     return (
-      <div className="flex items-center  justify-center py-12">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          <p className="text-gray-600 mt-4">Loading cart...</p>
-        </div>
+      <div className="flex justify-center py-20">
+        <div className="h-12 w-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl  mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
+    <div className="max-w-6xl mx-auto px-4 py-10">
+      <h1 className="text-3xl font-extrabold mb-8 text-gray-900">
+        Shopping Cart
+      </h1>
 
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <div className="bg-red-100 text-red-700 p-4 rounded-lg mb-6">
           {error}
         </div>
       )}
 
-      {!cart.items || cart.items.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-600 mb-4 text-lg">Your cart is empty</p>
-          <Link 
-            href="/product" 
-            className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
+      {!cart.items.length ? (
+        <div className="text-center py-20">
+          <p className="text-gray-600 text-lg mb-6">
+            Your cart is empty
+          </p>
+          <Link
+            href="/product"
+            className="inline-block bg-indigo-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-indigo-700 transition"
           >
             Continue Shopping
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Cart items */}
-          <div className="lg:col-span-2">
-            <div className="space-y-4">
-              {cart.items.map((item) => (
-                <div
-                  key={item.product?._id || item._id}
-                  className="flex gap-4 p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition"
-                >
-                  {/* Product Image */}
-                  <div className="w-24 h-24 flex-shrink-0">
-                    <img
-                      src={item.image || "/placeholder.jpg"}
-                      alt={item.name}
-                      className="w-full h-full object-cover rounded"
-                    />
-                  </div>
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* ================= CART ITEMS ================= */}
+          <div className="lg:col-span-2 space-y-4">
+            {cart.items.map((item) => (
+              <div
+                key={item.product?._id || item._id}
+                className="flex gap-4 p-4 bg-white border rounded-xl shadow-sm hover:shadow-md transition"
+              >
+                <img
+                  src={item.image || "/placeholder.jpg"}
+                  alt={item.name}
+                  className="w-24 h-24 object-cover rounded-lg bg-slate-50"
+                />
 
-                  {/* Product Details */}
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-lg text-gray-900">
-                      {item.name}
-                    </h3>
-                    <p className="text-gray-600 font-medium">
-                      ₹{item.price?.toLocaleString()}
-                    </p>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-lg text-gray-900">
+                    {item.name}
+                  </h3>
+                  <p className="text-indigo-600 font-bold">
+                    ₹{item.price.toLocaleString()}
+                  </p>
 
-                    {/* Quantity Control */}
-                    <div className="flex items-center text-gray-800 gap-2 mt-3">
-                      <button
-                        onClick={() =>
-                          handleUpdateQuantity(
-                            item.product?._id || item._id,
-                            Math.max(1, item.quantity - 1)
-                          )
-                        }
-                        className="px-2 py-1 border border-gray-300 rounded hover:bg-gray-100"
-                      >
-                        −
-                      </button>
-                      <span className="px-4 py-1 bg-gray-100 rounded min-w-12 text-center">
-                        {item.quantity}
-                      </span>
-                      <button
-                        onClick={() =>
-                          handleUpdateQuantity(
-                            item.product?._id || item._id,
-                            item.quantity + 1
-                          )
-                        }
-                        className="px-2 py-1 border border-gray-300 rounded hover:bg-gray-100"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Price & Remove */}
-                  <div className="text-right flex flex-col justify-between">
-                    <div>
-                      <p className="font-bold text-lg text-blue-600">
-                        ₹{(item.price * item.quantity)?.toLocaleString()}
-                      </p>
-                    </div>
+                  <div className="flex items-center gap-3 mt-3">
                     <button
                       onClick={() =>
-                        handleRemoveItem(item.product?._id || item._id)
+                        handleUpdateQuantity(
+                          item.product?._id || item._id,
+                          item.quantity - 1
+                        )
                       }
-                      className="text-red-600 hover:text-red-800 font-medium transition"
+                      className="w-8 h-8 border rounded-lg hover:bg-gray-100"
                     >
-                      Remove
+                      −
+                    </button>
+                    <span className="min-w-[32px] text-center">
+                      {item.quantity}
+                    </span>
+                    <button
+                      onClick={() =>
+                        handleUpdateQuantity(
+                          item.product?._id || item._id,
+                          item.quantity + 1
+                        )
+                      }
+                      className="w-8 h-8 border rounded-lg hover:bg-gray-100"
+                    >
+                      +
                     </button>
                   </div>
                 </div>
-              ))}
-            </div>
+
+                <div className="flex flex-col justify-between items-end">
+                  <p className="font-bold text-lg text-gray-900">
+                    ₹{(item.price * item.quantity).toLocaleString()}
+                  </p>
+                  <button
+                    onClick={() =>
+                      handleRemoveItem(item.product?._id || item._id)
+                    }
+                    className="text-sm text-red-600 hover:underline"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
 
-          {/* Order Summary */}
-          <div className="lg:col-span-1">
-            <div className="bg-linear-to-br from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-100 sticky top-24">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">
-                Order Summary
-              </h2>
+          {/* ================= SUMMARY ================= */}
+          <div className="bg-gradient-to-br from-indigo-600 to-indigo-500 text-white p-8 rounded-3xl shadow-xl sticky top-24">
+            <h2 className="text-2xl font-extrabold mb-6">
+              Order Summary
+            </h2>
 
-              <div className="space-y-3 mb-6 pb-6 border-b">
-                <div className="flex justify-between text-gray-700">
-                  <span>Subtotal:</span>
-                  <span className="font-medium">
-                    ₹{cart.totalPrice?.toLocaleString()}
-                  </span>
-                </div>
-                <div className="flex justify-between text-gray-700">
-                  <span>Shipping:</span>
-                  <span className="font-medium text-green-600">FREE</span>
-                </div>
-                <div className="flex justify-between text-gray-700">
-                  <span>Tax (18%):</span>
-                  <span className="font-medium">
-                    ₹{(cart.totalPrice * 0.18)?.toLocaleString(undefined, {
-                      maximumFractionDigits: 0,
-                    })}
-                  </span>
-                </div>
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between">
+                <span>Subtotal</span>
+                <span>₹{cart.totalPrice.toLocaleString()}</span>
               </div>
 
-              <div className="flex justify-between text-lg font-bold text-gray-900 mb-6">
-                <span>Total:</span>
-                <span className="text-blue-600">
-                  ₹{(cart.totalPrice + cart.totalPrice * 0.18)?.toLocaleString(
-                    undefined,
-                    { maximumFractionDigits: 0 }
-                  )}
-                </span>
+              <div className="flex justify-between">
+                <span>Shipping</span>
+                <span className="text-green-200 font-semibold">FREE</span>
               </div>
 
-              <button
-                onClick={handleCheckout}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition mb-3"
-              >
-                Proceed to Checkout
-              </button>
+              <div className="border-t border-indigo-300 my-3"></div>
 
-              <Link
-                href="/product"
-                className="block w-full text-center border border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold py-2 rounded-lg transition"
-              >
-                Continue Shopping
-              </Link>
+              <div className="flex justify-between text-xl font-extrabold">
+                <span>Total</span>
+                <span>₹{cart.totalPrice.toLocaleString()}</span>
+              </div>
             </div>
+
+            <p className="text-xs text-indigo-100 mt-4">
+              Prices are inclusive of all applicable taxes
+            </p>
+
+            <button
+              onClick={handleCheckout}
+              className="mt-6 w-full bg-yellow-400 hover:bg-yellow-300 text-indigo-900 py-3 rounded-xl font-extrabold transition"
+            >
+              Proceed to Checkout
+            </button>
+
+            <Link
+              href="/product"
+              className="block text-center mt-4 text-sm text-indigo-100 hover:underline"
+            >
+              Continue Shopping
+            </Link>
           </div>
         </div>
       )}

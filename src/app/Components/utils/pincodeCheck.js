@@ -1,108 +1,81 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
-import { useState, useEffect } from "react";
-
-const DELHIVERY_API =
-  "https://staging-express.delhivery.com/c/api/pin-codes/json/?filter_codes=";
+import { useState } from "react";
 
 export default function PincodeCheck({ deliveryRange }) {
   const [pincode, setPincode] = useState("");
-  const [status, setStatus] = useState(null); // idle | loading | success | error
-  const [message, setMessage] = useState("");
-
-  useEffect(() => {
-    const saved = localStorage.getItem("pincode");
-    if (saved) {
-      setPincode(saved);
-      setStatus("success");
-      setMessage(`Delivery available to ${saved}`);
-    }
-  }, []);
+  const [status, setStatus] = useState(null);
+  const [result, setResult] = useState(null);
 
   const checkPincode = async () => {
     if (!/^[1-9][0-9]{5}$/.test(pincode)) {
       setStatus("error");
-      setMessage("Please enter a valid 6-digit pincode");
       return;
     }
 
     try {
       setStatus("loading");
-      setMessage("");
 
       const res = await fetch(
-        `${DELHIVERY_API}${pincode}`,
-        {
-          headers: {
-            Authorization: `Token ${process.env.NEXT_PUBLIC_DELHIVERY_TOKEN}`,
-          },
-        }
+        `${process.env.NEXT_PUBLIC_API_BASE}/pincode/check?pincode=${pincode}`
       );
 
-      if (!res.ok) throw new Error("API error");
-
       const data = await res.json();
-      const pinData = data?.delivery_codes?.[0]?.postal_code;
 
-      if (pinData && pinData.pre_paid === "Y") {
-        localStorage.setItem("pincode", pincode);
-        setStatus("success");
-        setMessage(
-          `Delivery available to ${pinData.city}, ${pinData.state}`
-        );
+      if (!data.available) {
+        setStatus("unavailable");
       } else {
-        setStatus("error");
-        setMessage("Delivery not available for this pincode");
+        setResult(data);
+        setStatus("success");
       }
-    } catch (err) {
+    } catch {
       setStatus("error");
-      setMessage("Unable to check delivery. Please try again.");
     }
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 mb-6 animate-fadeIn">
-      <p className="font-semibold text-gray-900 mb-2">
-        Check Delivery Availability
-      </p>
+    <div className="bg-white rounded-xl border p-4 mt-4">
+      <p className="font-semibold mb-2">Check Delivery Availability</p>
 
       <div className="flex gap-2">
         <input
-          type="text"
-          placeholder="Enter 6-digit pincode"
           value={pincode}
           onChange={(e) => setPincode(e.target.value)}
-          maxLength={6}
-          className="border px-3 py-2 rounded-lg w-full
-                     focus:ring-2 focus:ring-indigo-500 outline-none"
+          placeholder="Enter Pincode"
+          className="flex-1 border px-3 py-2 rounded-lg"
         />
-
         <button
           onClick={checkPincode}
-          disabled={status === "loading"}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-lg font-semibold
-                     hover:bg-indigo-700 transition disabled:opacity-60"
+          className="bg-indigo-600 text-white px-4 rounded-lg"
         >
-          {status === "loading" ? "Checking..." : "Check"}
+          Check
         </button>
       </div>
 
-      {/* SUCCESS */}
-      {status === "success" && (
-        <div className="mt-3 text-sm text-green-600 animate-slideUp">
-          ✅ {message}
-          <div className="mt-1 text-gray-600">
-            🚚 Delivery by <b>{deliveryRange}</b> <br />
-            💳 COD Available • 🔄 Easy Returns
-          </div>
-        </div>
+      {/* STATES */}
+      {status === "loading" && (
+        <p className="text-sm mt-2 text-gray-500">
+          Checking availability…
+        </p>
       )}
 
-      {/* ERROR */}
+      {status === "success" && result && (
+        <p className="text-sm mt-2 text-green-600">
+          ✅ Deliverable to {result.city}, {result.state} <br />
+          🚚 Delivery by <b>{deliveryRange}</b> <br />
+          {result.cod && "💵 Cash on Delivery available"}
+        </p>
+      )}
+
+      {status === "unavailable" && (
+        <p className="text-sm mt-2 text-red-600">
+          ❌ Not deliverable to this pincode
+        </p>
+      )}
+
       {status === "error" && (
-        <div className="mt-3 text-sm text-red-500 animate-slideUp">
-          ❌ {message}
-        </div>
+        <p className="text-sm mt-2 text-red-600">
+          ⚠️ Invalid pincode or service error
+        </p>
       )}
     </div>
   );

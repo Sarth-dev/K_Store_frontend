@@ -9,27 +9,26 @@ export const metadata = {
   metadataBase: new URL("https://ravendelle.vercel.app"),
 
   title: {
-    default: "Ravendelle™ | Premium Home, Kitchen & Lifestyle Essentials Online",
+    default: "Ravendelle™ – Premium Home, Kitchen & Lifestyle Store in India",
     template: "%s | Ravendelle™",
   },
 
   description:
-    "Shop premium home & kitchen essentials, storage organizers, lifestyle products and daily-use items at Ravendelle. Fast delivery across India, secure payments & easy returns.",
+    "Ravendelle™ is India’s trusted online store for premium home, kitchen & lifestyle essentials. Secure payments, fast delivery across India & easy returns.",
 
   keywords: [
-    "home essentials online",
+    "Ravendelle",
+    "Ravendelle store",
+    "home essentials online india",
     "kitchen storage containers",
     "home organizers india",
-    "buy kitchen products online",
-    "lifestyle products india",
-    "best ecommerce store india",
-    "storage solutions for home",
-    "online shopping india",
+    "premium lifestyle products",
+    "trusted ecommerce india",
   ],
 
-  authors: [{ name: "Ravendelle" }],
-  creator: "Ravendelle",
-  publisher: "Ravendelle",
+  authors: [{ name: "Ravendelle™" }],
+  creator: "Ravendelle™",
+  publisher: "Ravendelle™",
 
   robots: {
     index: true,
@@ -47,31 +46,36 @@ export const metadata = {
     canonical: "https://ravendelle.vercel.app",
   },
 
+  icons: {
+    icon: "/favicon.jpg",
+    shortcut: "/favicon.jpg",
+    apple: "/favicon.jpg",
+  },
+
   openGraph: {
     type: "website",
     locale: "en_IN",
     url: "https://ravendelle.vercel.app",
-    siteName: "Ravendelle",
-    title: "Ravendelle™ | Premium Home & Kitchen Essentials",
+    siteName: "Ravendelle™",
+    title: "Ravendelle™ – Premium Home & Kitchen Essentials",
     description:
-      "Discover premium home, kitchen and lifestyle essentials at Ravendelle. Trusted by thousands. Fast delivery across India.",
+      "Shop premium home, kitchen & lifestyle essentials from a trusted Indian ecommerce brand.",
     images: [
       {
-        url: "/category_img/Kitchen.jpeg",
+        url: "/og-banner.jpg",
         width: 1200,
         height: 630,
-        alt: "Ravendelle - Home & Kitchen Essentials",
+        alt: "Ravendelle™ – Premium Home & Kitchen Store",
       },
     ],
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "Ravendelle™ | Shop Home & Kitchen Essentials",
+    title: "Ravendelle™ – Premium Online Store",
     description:
-      "Premium home & kitchen products with fast delivery and secure checkout.",
+      "Premium home & kitchen essentials with fast delivery and secure checkout.",
     images: ["/og-banner.jpg"],
-    creator: "@ravendelle",
   },
 
   category: "ecommerce",
@@ -81,23 +85,20 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        {/* Performance */}
+        {/* Backend Performance */}
         <link rel="preconnect" href="https://k-store-bdz5.onrender.com" />
         <link rel="dns-prefetch" href="https://k-store-bdz5.onrender.com" />
 
-        {/* Viewport */}
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-        {/* JSON-LD Schema */}
+        {/* Schema: Organization */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Organization",
-              name: "Ravendelle",
+              name: "Ravendelle™",
               url: "https://ravendelle.vercel.app",
-              logo: "https://ravendelle.vercel.app/New_logo2.jfif",
+              logo: "https://ravendelle.vercel.app/favicon.jpg",
               sameAs: [
                 "https://www.instagram.com/ravendelle",
                 "https://www.facebook.com/ravendelle",
@@ -106,14 +107,14 @@ export default function RootLayout({ children }) {
           }}
         />
 
-        {/* Website Search Schema (VERY IMPORTANT FOR ECOMMERCE) */}
+        {/* Schema: Website + Search Box */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebSite",
-              name: "Ravendelle",
+              name: "Ravendelle™",
               url: "https://ravendelle.vercel.app",
               potentialAction: {
                 "@type": "SearchAction",

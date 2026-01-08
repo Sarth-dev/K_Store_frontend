@@ -36,7 +36,7 @@ export default function YouMayLikeThis({ products, title }) {
 
       <div
         ref={ref}
-        className="flex gap-4 overflow-x-auto scrollbar-hide pb-2"
+        className="flex gap-4 overflow-hidden snap-x snap-mandatory pb-2"
       >
         {products.map((p) => (
           <div

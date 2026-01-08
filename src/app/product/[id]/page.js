@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
@@ -248,7 +249,7 @@ export default function ProductDetailPage() {
 
         {/* RELATED */}
         {related.length > 0 && (
-          <section className="mt-24">
+          <section className="mt-24 overflow-x-auto flex gap-4 hide-scrollbar ">
             <YouMayLikeThis
               products={related}
               title="Customers Also Bought"
