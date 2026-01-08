@@ -37,7 +37,7 @@ export default function Footer() {
           <div>
             <img
               src="/New_Logo2.png"
-              alt="Ravendelle"
+              alt="ravendelle"
               className="w-56 mb-5 rounded-md"
             />
 
