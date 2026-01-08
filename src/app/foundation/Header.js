@@ -117,7 +117,7 @@ export default function Header() {
         >
           
           <img
-            src="/New_logo2.jfif"
+            src="/New_logo2.png"
             alt="Brand Logo"
             className="h-10 md:h-12 w-auto"
           />
