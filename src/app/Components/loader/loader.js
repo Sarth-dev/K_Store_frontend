@@ -22,7 +22,7 @@ export default function Loader() {
           {/* Center Card */}
           <div className="absolute inset-8 rounded-2xl bg-white/70 backdrop-blur-xl shadow-xl border border-white/50 flex items-center justify-center">
             <span className="text-2xl font-extrabold bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">
-             <img src="/New_Logo2.png" alt="ravendelle"/>
+             <img src="/logo.png" alt="ravendelle"/>
             </span>
           </div>
         </div>
